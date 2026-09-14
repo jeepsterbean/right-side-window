@@ -1,4 +1,8 @@
 import './styles.css';
+import './process.css';
+import './story.css';
+
+document.documentElement.classList.add('js');
 
 /** Client marks for the nowadays-style logo field. */
 const CLIENTS = [
@@ -83,7 +87,7 @@ function setupNav() {
 }
 
 /**
- * Pin the retainer story and activate a chapter from scroll position.
+ * Pin the process story and activate a chapter from scroll position.
  */
 function setupScrolly() {
   const root = document.querySelector('[data-scrolly]');
@@ -92,8 +96,7 @@ function setupScrolly() {
   const chapters = [...root.querySelectorAll('[data-chapter]')];
   const marks = [...root.querySelectorAll('[data-step-mark]')];
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const pin = root.querySelector('.offer-pin');
+  const mobileNav = root.querySelector('[data-process-nav]');
 
   const setStep = (index) => {
     if (root.dataset.step === String(index)) return;
@@ -101,39 +104,35 @@ function setupScrolly() {
     chapters.forEach((chapter, i) => {
       chapter.toggleAttribute('data-active', i === index);
     });
-    marks.forEach((mark, i) => {
+    marks.forEach((mark) => {
+      const i = Number(mark.dataset.stepMark);
       if (i === index) mark.setAttribute('aria-current', 'step');
       else mark.removeAttribute('aria-current');
     });
   };
 
   /**
-   * Map scroll position to progress (0–1) and the chapter sitting below the pin.
+   * Map scroll to progress and the chapter around the viewport reading line.
    */
   const update = () => {
     const rect = root.getBoundingClientRect();
     const range = rect.height - window.innerHeight;
     const progress = range <= 0 ? 1 : Math.min(1, Math.max(0, -rect.top / range));
-    root.style.setProperty('--offer-progress', progress.toFixed(4));
+    root.style.setProperty('--process-progress', progress.toFixed(4));
 
-    const pinBottom = pin ? pin.getBoundingClientRect().bottom : 0;
-    if (pin) {
-      pin.toggleAttribute('data-stuck', pin.getBoundingClientRect().top <= 60);
+    const desktop = window.matchMedia('(min-width: 1024px)').matches;
+    if (mobileNav) {
+      mobileNav.toggleAttribute(
+        'data-stuck',
+        !desktop && mobileNav.getBoundingClientRect().top <= 60,
+      );
     }
 
-    const probe = pinBottom || window.innerHeight * 0.2;
+    const probe = desktop ? window.innerHeight * 0.38 : window.innerHeight * 0.28;
     let current = 0;
-    let bestVisible = -1;
     chapters.forEach((chapter, i) => {
       const box = chapter.getBoundingClientRect();
-      const visible = Math.max(
-        0,
-        Math.min(box.bottom, window.innerHeight) - Math.max(box.top, probe),
-      );
-      if (visible > bestVisible) {
-        bestVisible = visible;
-        current = i;
-      }
+      if (box.top <= probe) current = i;
     });
     setStep(current);
   };
@@ -143,15 +142,14 @@ function setupScrolly() {
       const index = Number(mark.dataset.stepMark);
       chapters[index]?.scrollIntoView({
         behavior: reduced ? 'auto' : 'smooth',
-        block: 'center',
+        block: 'start',
       });
     });
   });
 
   if (reduced) {
-    root.dataset.step = '0';
     setStep(0);
-    root.style.setProperty('--offer-progress', '1');
+    root.style.setProperty('--process-progress', '1');
     return;
   }
 
@@ -170,6 +168,68 @@ function setupScrolly() {
   update();
 }
 
+/**
+ * Play a short entrance on each process visual once it reaches the viewport.
+ */
+function setupArtifacts() {
+  const nodes = [...document.querySelectorAll('.process .artifact')];
+  if (!nodes.length) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    nodes.forEach((node) => node.classList.add('is-in'));
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-in');
+        io.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.08, rootMargin: '0px 0px -6% 0px' },
+  );
+
+  nodes.forEach((node) => {
+    const box = node.getBoundingClientRect();
+    if (box.top < window.innerHeight * 0.92 && box.bottom > 80) node.classList.add('is-in');
+    else io.observe(node);
+  });
+}
+
+/**
+ * Play entrance motion once a block reaches the viewport.
+ */
+function setupReveal() {
+  const nodes = [...document.querySelectorAll('[data-reveal]')];
+  if (!nodes.length) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    nodes.forEach((node) => node.classList.add('is-in'));
+    return;
+  }
+
+  const show = (node) => node.classList.add('is-in');
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        show(entry.target);
+        io.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.08, rootMargin: '0px 0px -6% 0px' },
+  );
+
+  nodes.forEach((node) => {
+    const box = node.getBoundingClientRect();
+    if (box.top < window.innerHeight * 0.92 && box.bottom > 80) show(node);
+    else io.observe(node);
+  });
+}
+
 renderLogos();
 setupNav();
 setupScrolly();
+setupArtifacts();
+setupReveal();
