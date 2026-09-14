@@ -2,7 +2,7 @@ import './styles.css';
 
 /** Client marks for the nowadays-style logo field. */
 const CLIENTS = [
-  { src: '/logos/asics.jpg', name: 'ASICS' },
+  { src: '/logos/asics.png', name: 'ASICS' },
   { src: '/logos/puma.png', name: 'Puma' },
   { src: '/logos/brooks-running.png', name: 'Brooks' },
   { src: '/logos/keen-footwear.png', name: 'KEEN' },
@@ -82,5 +82,94 @@ function setupNav() {
   });
 }
 
+/**
+ * Pin the retainer story and activate a chapter from scroll position.
+ */
+function setupScrolly() {
+  const root = document.querySelector('[data-scrolly]');
+  if (!root) return;
+
+  const chapters = [...root.querySelectorAll('[data-chapter]')];
+  const marks = [...root.querySelectorAll('[data-step-mark]')];
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const pin = root.querySelector('.offer-pin');
+
+  const setStep = (index) => {
+    if (root.dataset.step === String(index)) return;
+    root.dataset.step = String(index);
+    chapters.forEach((chapter, i) => {
+      chapter.toggleAttribute('data-active', i === index);
+    });
+    marks.forEach((mark, i) => {
+      if (i === index) mark.setAttribute('aria-current', 'step');
+      else mark.removeAttribute('aria-current');
+    });
+  };
+
+  /**
+   * Map scroll position to progress (0–1) and the chapter sitting below the pin.
+   */
+  const update = () => {
+    const rect = root.getBoundingClientRect();
+    const range = rect.height - window.innerHeight;
+    const progress = range <= 0 ? 1 : Math.min(1, Math.max(0, -rect.top / range));
+    root.style.setProperty('--offer-progress', progress.toFixed(4));
+
+    const pinBottom = pin ? pin.getBoundingClientRect().bottom : 0;
+    if (pin) {
+      pin.toggleAttribute('data-stuck', pin.getBoundingClientRect().top <= 60);
+    }
+
+    const probe = pinBottom || window.innerHeight * 0.2;
+    let current = 0;
+    let bestVisible = -1;
+    chapters.forEach((chapter, i) => {
+      const box = chapter.getBoundingClientRect();
+      const visible = Math.max(
+        0,
+        Math.min(box.bottom, window.innerHeight) - Math.max(box.top, probe),
+      );
+      if (visible > bestVisible) {
+        bestVisible = visible;
+        current = i;
+      }
+    });
+    setStep(current);
+  };
+
+  marks.forEach((mark) => {
+    mark.addEventListener('click', () => {
+      const index = Number(mark.dataset.stepMark);
+      chapters[index]?.scrollIntoView({
+        behavior: reduced ? 'auto' : 'smooth',
+        block: 'center',
+      });
+    });
+  });
+
+  if (reduced) {
+    root.dataset.step = '0';
+    setStep(0);
+    root.style.setProperty('--offer-progress', '1');
+    return;
+  }
+
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      update();
+      ticking = false;
+    });
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  update();
+}
+
 renderLogos();
 setupNav();
+setupScrolly();

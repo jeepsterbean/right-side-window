@@ -25,15 +25,13 @@
         <div class="nav-inner">
           <div class="nav-left">
             <a class="brand" href="/" aria-label="Right Side People home">
-              <svg class="brand-logo" viewBox="0 0 430 156" width="148" height="54" role="img" aria-hidden="true">
-                <text x="6" y="86" fill="#E3BC2F" font-size="78" font-weight="900" letter-spacing="-3">RIGHT</text>
-                <path fill="#E3BC2F" d="M276 16 372 78 276 140V16Z"/>
-                <rect x="118" y="96" width="38" height="38" fill="#C53630"/>
-                <rect x="168" y="104" width="32" height="32" fill="#4DBFD0"/>
-                <circle cx="204" cy="136" r="20" fill="#7B57B2"/>
-                <path fill="#69A83C" d="M328 94h42l-21 38-21-38Z"/>
-                <text x="10" y="148" fill="#E3BC2F" font-size="20" font-style="italic" font-family="Georgia, 'Times New Roman', serif">people</text>
-              </svg>
+              <img
+                class="brand-logo"
+                src="/logo.png"
+                alt=""
+                width="148"
+                height="109"
+              />
             </a>
             <span class="nav-rule" aria-hidden="true"></span>
             <nav class="nav-links" aria-label="Primary">
@@ -68,51 +66,144 @@
         </nav>
       </div>
 
-      <main id="main" class="hero">
-        <div class="hero-inner">
-          <a class="pill" href="#book">
-            <span class="pill-shine" aria-hidden="true"></span>
-            <span class="pill-label">Singapore’s marketing team, on tap</span>
-          </a>
-
-          <div class="hero-copy">
-            <h1 class="hero-title" data-hero-title>
-              <span class="hero-line">
-                <span class="word">Your</span>
-                <span class="word">Entire</span>
-                <span class="word">Marketing</span>
-                <span class="word">Team.</span>
-              </span>
-              <span class="hero-line">
-                <span class="word">Without</span>
-                <span class="word">the</span>
-                <span class="word">Entire</span>
-                <span class="word">Payroll.</span>
-              </span>
-            </h1>
-            <p class="hero-sub" data-hero-sub>
-              More visibility. More qualified leads. More revenue.
-            </p>
-          </div>
-
-          <div class="hero-actions" data-hero-actions>
-            <a class="btn btn-primary" href="#book">
-              <span>Book a call</span>
-              <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path class="arrow-head" d="M9 6l7 6-7 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                <path class="arrow-shaft" d="M16 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-              </svg>
+      <main id="main">
+        <section class="hero">
+          <div class="hero-inner">
+            <a class="pill" href="#book">
+              <span class="pill-shine" aria-hidden="true"></span>
+              <span class="pill-label">Singapore’s marketing team, on tap</span>
             </a>
-            <a class="btn btn-secondary" href="#more">Learn more</a>
-          </div>
 
-          <div class="logo-field" id="more" data-logo-field aria-label="Client logos">
-            <div class="logo-rows" data-logo-rows></div>
-            <div class="logo-marquee" data-logo-marquee>
-              <div class="logo-track" data-logo-track></div>
+            <div class="hero-copy">
+              <h1 class="hero-title" data-hero-title>
+                <span class="hero-line">
+                  <span class="word">Your</span>
+                  <span class="word">Entire</span>
+                  <span class="word">Marketing</span>
+                  <span class="word">Team.</span>
+                </span>
+                <span class="hero-line">
+                  <span class="word">Without</span>
+                  <span class="word">the</span>
+                  <span class="word">Entire</span>
+                  <span class="word">Payroll.</span>
+                </span>
+              </h1>
+              <p class="hero-sub" data-hero-sub>
+                More visibility. More qualified leads. More revenue.
+              </p>
+            </div>
+
+            <div class="hero-actions" data-hero-actions>
+              <a class="btn btn-primary" href="#book">
+                <span>Book a call</span>
+                <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path class="arrow-head" d="M9 6l7 6-7 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  <path class="arrow-shaft" d="M16 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+              </a>
+              <a class="btn btn-secondary" href="#services">Learn more</a>
+            </div>
+
+            <div class="logo-field" id="more" data-logo-field aria-label="Client logos">
+              <div class="logo-rows" data-logo-rows></div>
+              <div class="logo-marquee" data-logo-marquee>
+                <div class="logo-track" data-logo-track></div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        <section class="offer" id="services" data-scrolly data-step="0" aria-labelledby="offer-title">
+          <div class="offer-inner">
+            <aside class="offer-pin">
+              <div class="offer-intro">
+                <p class="offer-kicker">Complete social media growth</p>
+                <h2 class="offer-price" id="offer-title">
+                  <span class="offer-amount">$1,000</span>
+                  <span class="offer-period">/month</span>
+                </h2>
+                <p class="offer-lede">For a flat monthly fee, we become your dedicated growth partner.</p>
+              </div>
+
+              <svg class="offer-mark" viewBox="0 0 240 240" aria-hidden="true">
+                <rect class="mark mark-audit" x="22" y="28" width="74" height="74" fill="#C53630" />
+                <rect class="mark mark-diagnose" x="112" y="48" width="58" height="58" fill="#4DBFD0" />
+                <circle class="mark mark-strategize" cx="172" cy="176" r="38" fill="#7B57B2" />
+                <path class="mark mark-execute" d="M36 128l92 52-92 52V128Z" fill="#E3BC2F" />
+              </svg>
+
+              <ol class="offer-rail" data-offer-rail>
+                <li>
+                  <button type="button" data-step-mark="0" aria-current="step">
+                    <span class="offer-num">01</span>
+                    <span>Audit</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-step-mark="1">
+                    <span class="offer-num">02</span>
+                    <span>Diagnose</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-step-mark="2">
+                    <span class="offer-num">03</span>
+                    <span>Strategize</span>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-step-mark="3">
+                    <span class="offer-num">04</span>
+                    <span>Execute</span>
+                  </button>
+                </li>
+              </ol>
+            </aside>
+
+            <div class="offer-chapters">
+              <article class="offer-chapter" data-chapter="0" data-active>
+                <p class="offer-step">01 — Audit</p>
+                <h3 class="offer-heading">We start with a thorough audit.</h3>
+                <p class="offer-copy">
+                  Your sales funnel, marketing efforts, and social media — mapped end to end.
+                </p>
+              </article>
+
+              <article class="offer-chapter" data-chapter="1">
+                <p class="offer-step">02 — Diagnose</p>
+                <h3 class="offer-heading">We identify what’s holding you back.</h3>
+                <p class="offer-copy">
+                  From there, we pinpoint the friction and uncover growth opportunities.
+                </p>
+              </article>
+
+              <article class="offer-chapter" data-chapter="2">
+                <p class="offer-step">03 — Strategize</p>
+                <h3 class="offer-heading">Then we build the custom strategy.</h3>
+                <p class="offer-copy">
+                  A plan to increase visibility, attract the right customers, and drive sales.
+                </p>
+              </article>
+
+              <article class="offer-chapter" data-chapter="3">
+                <p class="offer-step">04 — Execute</p>
+                <h3 class="offer-heading">We bring the strategy to life.</h3>
+                <p class="offer-copy">
+                  Next, a professionally produced video designed to connect with your audience
+                  and attract new customers, boosting long-term value.
+                </p>
+                <a class="btn btn-primary offer-cta" id="book" href="#book">
+                  <span>Book a call</span>
+                  <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path class="arrow-head" d="M9 6l7 6-7 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path class="arrow-shaft" d="M16 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                </a>
+              </article>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
 
