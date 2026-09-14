@@ -48,7 +48,10 @@
 }
 
 .team-photo {
-  background: color-mix(in oklab, #e3bc2f 18%, #f7f3e6);
+  background:
+    radial-gradient(ellipse 70% 80% at 80% 0%, color-mix(in oklab, var(--glow-b) 22%, transparent), transparent 58%),
+    radial-gradient(ellipse 60% 70% at 12% 100%, color-mix(in oklab, var(--glow-c) 16%, transparent), transparent 55%),
+    linear-gradient(180deg, var(--wash-top), var(--wash-mid));
   display: flex;
   justify-content: center;
   padding: 1.75rem 0 0.85rem;
@@ -122,7 +125,7 @@
 .case-poster img {
   width: min(100%, 20rem);
   height: auto;
-  background: #eceaf2;
+  background: var(--bg-media);
 }
 
 .case-client {
@@ -189,7 +192,7 @@
   width: 100%;
   height: auto;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--bg-primary);
 }
 
 .case-proof a:focus-visible {
@@ -253,7 +256,7 @@
 .work-row img {
   width: 100%;
   height: auto;
-  background: #eceaf2;
+  background: var(--bg-media);
 }
 
 .work-row figcaption {
@@ -500,7 +503,19 @@
   margin-inline: auto;
   padding: 3rem 1.5rem 3.5rem;
   background: var(--cta);
-  color: #eef0ff;
+  color: oklch(94% 0.03 280);
+}
+
+.book-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 70% 80% at 88% 8%, color-mix(in oklab, var(--glow-a) 38%, transparent), transparent 58%),
+    radial-gradient(ellipse 48% 55% at 8% 92%, color-mix(in oklab, var(--glow-b) 28%, transparent), transparent 55%),
+    linear-gradient(180deg, color-mix(in oklab, var(--glow-c) 16%, transparent) 0%, transparent 48%);
 }
 
 .book-copy {
@@ -515,7 +530,7 @@
   font-weight: 600;
   letter-spacing: -0.045em;
   line-height: 0.96;
-  color: #f7f8ff;
+  color: var(--cta-ink);
 }
 
 .book-panel p {
@@ -524,7 +539,7 @@
   font-size: 1.0625rem;
   font-weight: 500;
   line-height: 1.6;
-  color: #d5dbff;
+  color: oklch(88% 0.05 280);
 }
 
 .book-mark {
@@ -539,14 +554,14 @@
 }
 
 .book-cta.btn-primary {
-  background: #f7f8ff;
+  background: var(--cta-ink);
   color: var(--cta);
-  border-color: #f7f8ff;
+  border-color: var(--cta-ink);
 }
 
 @media (hover: hover) {
   .book-cta.btn-primary:hover {
-    background: #fff;
+    background: oklch(100% 0 0);
   }
 }
 

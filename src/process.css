@@ -90,7 +90,7 @@
   isolation: isolate;
   margin-inline: calc(var(--page-gutter) * -1);
   padding: 0.4rem var(--page-gutter) 0.45rem;
-  background: color-mix(in oklab, #fdfcfe 90%, transparent);
+  background: color-mix(in oklab, var(--bg-primary) 88%, transparent);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
@@ -102,7 +102,7 @@
   right: 0;
   bottom: 100%;
   height: 3.7rem;
-  background: #fdfcfe;
+  background: var(--bg-primary);
 }
 
 .process-rail {
@@ -152,7 +152,7 @@
 
 .process-rail button[aria-current="step"] {
   color: var(--text-primary);
-  background: rgba(79, 71, 64, 0.07);
+  background: color-mix(in oklab, var(--text-primary) 7%, transparent);
 }
 
 .process-chapter {
@@ -202,8 +202,8 @@
 
 .paper {
   padding: 1.35rem 1.35rem 1.45rem;
-  background: #f6f3eb;
-  border: 1px solid color-mix(in oklab, #212127 10%, transparent);
+  background: var(--bg-paper);
+  border: 1px solid var(--border);
 }
 
 .paper header {
@@ -279,16 +279,7 @@
 .artifact-photo img {
   width: min(100%, 22.5rem);
   height: auto;
-  background: #eceaf2;
-}
-
-.js .artifact {
-  opacity: 0;
-  transform: translateY(14px);
-}
-
-.js .artifact.is-in {
-  animation: rise 640ms var(--ease-out-expo) both;
+  background: var(--bg-media);
 }
 
 @media (min-width: 1024px) {
@@ -457,13 +448,6 @@
   .process-chapter {
     min-height: 0;
     padding-block: 1.75rem;
-  }
-
-  .js .artifact,
-  .js .artifact.is-in {
-    opacity: 1;
-    transform: none;
-    animation: none;
   }
 
   .process-rail--pin::after,

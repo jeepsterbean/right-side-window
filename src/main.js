@@ -36,30 +36,36 @@ const CLIENTS = [
   { src: '/logos/muses.png', name: 'Muses' },
 ];
 
-/**
- * Render a single client mark.
- */
-function mark(client) {
-  return `<img class="logo-mark" src="${client.src}" alt="${client.name}" />`;
+const LOGO_COLUMNS = 7;
+const wideViewport = window.matchMedia('(min-width: 1024px)');
+
+function slot(client, delayMs) {
+  const delay = delayMs ? ` style="animation-delay:${delayMs}ms"` : '';
+  return `<div class="logo-slot"${delay}><img class="logo-mark" src="${client.src}" alt="${client.name}" decoding="async" /></div>`;
 }
 
-function slot(client, index) {
-  const delay = 80 + index * 40;
-  return `<div class="logo-slot" style="animation-delay:${delay}ms">${mark(client)}</div>`;
-}
-
+/** Rows and marquee are mutually exclusive by breakpoint, so only the visible one is built. */
 function renderLogos() {
   const rowsRoot = document.querySelector('[data-logo-rows]');
   const track = document.querySelector('[data-logo-track]');
   if (!rowsRoot || !track) return;
 
-  const rows = [CLIENTS.slice(0, 7), CLIENTS.slice(7, 14), CLIENTS.slice(14, 21), CLIENTS.slice(21, 28)];
-  rowsRoot.innerHTML = rows
-    .map((row, rowIndex) => `<div class="logo-row">${row.map((c, i) => slot(c, rowIndex * 7 + i)).join('')}</div>`)
-    .join('');
+  if (wideViewport.matches) {
+    track.innerHTML = '';
+    const rows = [];
+    for (let start = 0; start < CLIENTS.length; start += LOGO_COLUMNS) {
+      const cells = CLIENTS.slice(start, start + LOGO_COLUMNS)
+        .map((client, offset) => slot(client, 80 + (start + offset) * 40))
+        .join('');
+      rows.push(`<div class="logo-row">${cells}</div>`);
+    }
+    rowsRoot.innerHTML = rows.join('');
+    return;
+  }
 
-  const marquee = CLIENTS.concat(CLIENTS).concat(CLIENTS);
-  track.innerHTML = marquee.map((c) => slot(c, 0)).join('');
+  rowsRoot.innerHTML = '';
+  // Three passes so the marquee's -33.333% loop lands on an identical frame.
+  track.innerHTML = [...CLIENTS, ...CLIENTS, ...CLIENTS].map((client) => slot(client)).join('');
 }
 
 function setupNav() {
@@ -169,10 +175,10 @@ function setupScrolly() {
 }
 
 /**
- * Play a short entrance on each process visual once it reaches the viewport.
+ * Play entrance motion once a block reaches the viewport.
  */
-function setupArtifacts() {
-  const nodes = [...document.querySelectorAll('.process .artifact')];
+function setupReveal() {
+  const nodes = [...document.querySelectorAll('[data-reveal]')];
   if (!nodes.length) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     nodes.forEach((node) => node.classList.add('is-in'));
@@ -197,39 +203,8 @@ function setupArtifacts() {
   });
 }
 
-/**
- * Play entrance motion once a block reaches the viewport.
- */
-function setupReveal() {
-  const nodes = [...document.querySelectorAll('[data-reveal]')];
-  if (!nodes.length) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    nodes.forEach((node) => node.classList.add('is-in'));
-    return;
-  }
-
-  const show = (node) => node.classList.add('is-in');
-
-  const io = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        show(entry.target);
-        io.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.08, rootMargin: '0px 0px -6% 0px' },
-  );
-
-  nodes.forEach((node) => {
-    const box = node.getBoundingClientRect();
-    if (box.top < window.innerHeight * 0.92 && box.bottom > 80) show(node);
-    else io.observe(node);
-  });
-}
-
 renderLogos();
+wideViewport.addEventListener('change', renderLogos);
 setupNav();
 setupScrolly();
-setupArtifacts();
 setupReveal();
