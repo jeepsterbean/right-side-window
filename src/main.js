@@ -147,40 +147,55 @@ function setupNav() {
 }
 
 /**
- * Mark the chapter whose step label has reached the sticky pricing question.
+ * Drive a sticky scrolly stage: one viewport, views swap with scroll progress.
  */
-function setupScrolly() {
-  const root = document.querySelector('[data-scrolly]');
-  if (!root) return;
-
-  const pin = root.querySelector('.process-pin-inner');
+function setupScrollyRoot(root) {
   const chapters = [...root.querySelectorAll('[data-chapter]')];
+  const count = chapters.length;
+  if (!count) return;
+
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const desktop = window.matchMedia('(min-width: 1024px)');
+  let current = -1;
 
-  const setStep = (index) => {
-    root.dataset.step = String(index);
-    chapters.forEach((chapter, i) => {
-      chapter.toggleAttribute('data-active', i === index);
+  const setStacked = () => {
+    current = -1;
+    root.dataset.step = '0';
+    chapters.forEach((chapter) => {
+      chapter.toggleAttribute('data-active', true);
+      chapter.removeAttribute('inert');
+      chapter.removeAttribute('aria-hidden');
     });
   };
 
   /**
-   * Active chapter is the last one whose label has crossed the pin's top edge.
+   * Show one view; inert keeps hidden CTAs out of the tab order.
+   */
+  const setStep = (index) => {
+    if (current === index) return;
+    current = index;
+    root.dataset.step = String(index);
+    chapters.forEach((chapter, i) => {
+      const on = i === index;
+      chapter.toggleAttribute('data-active', on);
+      chapter.toggleAttribute('inert', !on);
+      chapter.setAttribute('aria-hidden', String(!on));
+    });
+  };
+
+  /**
+   * Map the section's sticky travel to equally spaced views.
    */
   const update = () => {
     if (!desktop.matches || motion.matches) {
-      chapters.forEach((chapter) => chapter.toggleAttribute('data-active', true));
+      setStacked();
       return;
     }
 
-    const probe = pin ? pin.getBoundingClientRect().top + 36 : window.innerHeight * 0.22;
-    let current = 0;
-    chapters.forEach((chapter, i) => {
-      const label = chapter.querySelector('.process-step') ?? chapter;
-      if (label.getBoundingClientRect().top <= probe) current = i;
-    });
-    setStep(current);
+    const rect = root.getBoundingClientRect();
+    const travel = Math.max(1, rect.height - window.innerHeight);
+    const progress = Math.min(1, Math.max(0, -rect.top / travel));
+    setStep(Math.min(count - 1, Math.floor(progress * count)));
   };
 
   let ticking = false;
@@ -198,9 +213,11 @@ function setupScrolly() {
   motion.addEventListener('change', onScroll);
   desktop.addEventListener('change', onScroll);
 
-  root.dataset.step = '';
-  setStep(0);
   update();
+}
+
+function setupScrolly() {
+  document.querySelectorAll('[data-scrolly]').forEach(setupScrollyRoot);
 }
 
 /**
@@ -231,6 +248,7 @@ function setupReveal() {
     else io.observe(node);
   });
 }
+
 
 renderLogos();
 reducedMotion.addEventListener('change', renderLogos);
