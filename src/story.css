@@ -8,11 +8,6 @@
   z-index: 2;
 }
 
-.team {
-  padding: 4.5rem 0 0;
-}
-
-.team-inner,
 .work-inner,
 .retainer-inner,
 .faq-inner,
@@ -21,84 +16,6 @@
   max-width: var(--page-max);
   margin-inline: auto;
   padding-inline: var(--page-gutter);
-}
-
-.team-lead {
-  display: grid;
-  gap: 1.15rem;
-  margin-bottom: 2rem;
-}
-
-.team-title {
-  margin: 0;
-  max-width: 10ch;
-  font-size: clamp(2.375rem, 1.4rem + 5vw, 4.5rem);
-  font-weight: 600;
-  letter-spacing: -0.045em;
-  line-height: 0.96;
-}
-
-.team-lede {
-  margin: 0;
-  max-width: 36rem;
-  font-size: var(--text-body-xl);
-  font-weight: 500;
-  line-height: 1.6;
-  color: var(--text-secondary);
-}
-
-.team-photo {
-  background:
-    radial-gradient(ellipse 70% 80% at 80% 0%, color-mix(in oklab, var(--glow-b) 22%, transparent), transparent 58%),
-    radial-gradient(ellipse 60% 70% at 12% 100%, color-mix(in oklab, var(--glow-c) 16%, transparent), transparent 55%),
-    linear-gradient(180deg, var(--wash-top), var(--wash-mid));
-  display: flex;
-  justify-content: center;
-  padding: 1.75rem 0 0.85rem;
-}
-
-.team-photo img {
-  width: min(100%, 68.75rem);
-  height: auto;
-}
-
-.team-caps {
-  margin: 2.25rem 0 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 1.75rem;
-}
-
-.team-caps h3 {
-  margin: 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-}
-
-.team-caps h3 + p {
-  margin: 0.4rem 0 0;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.team-cap-items {
-  margin: 0.55rem 0 0;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  line-height: 1.4;
-  color: var(--text-primary);
-}
-
-.team-coord {
-  margin: 2rem 0 0;
-  padding-bottom: 4.5rem;
-  font-size: 1.0625rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
 }
 
 .work {
@@ -604,11 +521,6 @@
 }
 
 @media (min-width: 768px) {
-  .team-caps {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.75rem;
-  }
-
   .case-metrics {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.15rem;
@@ -642,42 +554,6 @@
 }
 
 @media (min-width: 1024px) {
-  .team {
-    padding-top: 6.5rem;
-  }
-
-  .team-lead {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    align-items: end;
-    gap: 3rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .team-lede {
-    max-width: 34rem;
-    justify-self: end;
-    padding-bottom: 0.35rem;
-  }
-
-  .team-photo {
-    padding: 2.5rem 0 1rem;
-  }
-
-  .team-photo img {
-    width: min(100%, 68.75rem);
-  }
-
-  .team-caps {
-    margin-top: 2.75rem;
-    gap: 2.5rem;
-  }
-
-  .team-coord {
-    margin-top: 2.25rem;
-    padding-bottom: 6.5rem;
-    text-align: center;
-  }
-
   .work {
     padding: 5.5rem 0 7rem;
   }

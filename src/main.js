@@ -1,5 +1,6 @@
 import './styles.css';
 import './process.css';
+import './team.css';
 import './story.css';
 
 document.documentElement.classList.add('js');
