@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 156" fill="none" role="img" aria-labelledby="logoTitle">
+  <title id="logoTitle">Right Side People</title>
+  <text x="6" y="86" fill="#E3BC2F" font-size="78" font-weight="900" font-family="Arial Black, Helvetica, sans-serif" letter-spacing="-3">RIGHT</text>
+  <path fill="#E3BC2F" d="M276 16 372 78 276 140V16Z"/>
+  <rect x="118" y="96" width="38" height="38" fill="#C53630"/>
+  <rect x="168" y="104" width="32" height="32" fill="#4DBFD0"/>
+  <circle cx="204" cy="136" r="20" fill="#7B57B2"/>
+  <path fill="#69A83C" d="M328 94h42l-21 38-21-38Z"/>
+  <text x="10" y="148" fill="#E3BC2F" font-size="20" font-style="italic" font-family="Georgia, Times New Roman, serif">people</text>
+</svg>
