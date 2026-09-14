@@ -71,21 +71,24 @@
               <a href="#services">Services</a>
               <a href="#work">Work</a>
               <a href="#about">About</a>
-              <a href="#book">Book</a>
             </nav>
           </div>
-          <button
-            class="nav-toggle"
-            type="button"
-            aria-expanded="false"
-            aria-controls="mobile-menu"
-            data-nav-toggle
-          >
-            <span class="sr-only">Open menu</span>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M3 5H21M3 12H21M3 19H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-            </svg>
-          </button>
+          <div class="nav-actions">
+            <a class="nav-ghost" href="#services">Learn more</a>
+            <a class="nav-cta" href="#book">Book a call</a>
+            <button
+              class="nav-toggle"
+              type="button"
+              aria-expanded="false"
+              aria-controls="mobile-menu"
+              data-nav-toggle
+            >
+              <span class="sr-only">Open menu</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+              </svg>
+            </button>
+          </div>
         </div>
       </header>
 
@@ -94,6 +97,7 @@
           <a href="#services">Services</a>
           <a href="#work">Work</a>
           <a href="#about">About</a>
+          <a class="mobile-ghost" href="#services">Learn more</a>
           <a class="mobile-cta" href="#book">Book a call</a>
         </nav>
       </div>
@@ -137,207 +141,238 @@
               <a class="btn btn-secondary" href="#services">Learn more</a>
             </div>
 
-            <div class="logo-field" aria-label="Client logos">
+            <div class="logo-field" aria-labelledby="logo-kicker">
+              <p class="logo-kicker" id="logo-kicker">Trusted by brands across Singapore and beyond</p>
               <div class="logo-rows" data-logo-rows></div>
-              <div class="logo-marquee" data-logo-marquee>
-                <div class="logo-track" data-logo-track></div>
-              </div>
             </div>
           </div>
         </section>
 
         <section class="process" id="services" data-scrolly data-step="0" aria-labelledby="process-title">
-          <div class="process-inner">
-            <aside class="process-pin">
-              <p class="process-kicker">Complete social media growth</p>
-              <h2 class="process-price" id="process-title">
-                <span class="process-amount">$1,000</span>
-                <span class="process-period">/month</span>
-              </h2>
-              <p class="process-lede">
-                Strategy, content, and growth — run by one team.
-                The output of a department, billed as a retainer.
-              </p>
-              <ol class="process-rail process-rail--pin" data-process-rail>
+          <h2 class="sr-only" id="process-title">Services</h2>
+
+          <div class="process-shell">
+            <nav class="process-strip" aria-label="Process chapters">
+              <ol class="process-rail" data-process-rail>
                 <li>
-                  <button type="button" data-step-mark="0" aria-current="step">
+                  <button type="button" data-step-mark="0" class="is-passed" aria-current="step">
+                    <span class="process-seg" aria-hidden="true"></span>
                     <span class="process-num">01</span>
-                    <span>Find the gaps</span>
+                    <span>Audit</span>
                   </button>
                 </li>
                 <li>
                   <button type="button" data-step-mark="1">
+                    <span class="process-seg" aria-hidden="true"></span>
                     <span class="process-num">02</span>
-                    <span>Set the priorities</span>
+                    <span>Diagnose</span>
                   </button>
                 </li>
                 <li>
                   <button type="button" data-step-mark="2">
+                    <span class="process-seg" aria-hidden="true"></span>
                     <span class="process-num">03</span>
-                    <span>Build the plan</span>
+                    <span>Strategise</span>
                   </button>
                 </li>
                 <li>
                   <button type="button" data-step-mark="3">
+                    <span class="process-seg" aria-hidden="true"></span>
                     <span class="process-num">04</span>
-                    <span>Put it to work</span>
+                    <span>Execute</span>
                   </button>
                 </li>
               </ol>
-              <a class="process-book" href="#book">Book a call</a>
-            </aside>
+            </nav>
 
-            <div class="process-story">
-              <nav class="process-nav" aria-label="Process chapters" data-process-nav>
-                <ol class="process-rail process-rail--mobile" data-process-rail>
-                  <li>
-                    <button type="button" data-step-mark="0" aria-current="step">
-                      <span class="process-num">01</span>
-                      <span>Gaps</span>
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" data-step-mark="1">
-                      <span class="process-num">02</span>
-                      <span>Priorities</span>
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" data-step-mark="2">
-                      <span class="process-num">03</span>
-                      <span>Plan</span>
-                    </button>
-                  </li>
-                  <li>
-                    <button type="button" data-step-mark="3">
-                      <span class="process-num">04</span>
-                      <span>Work</span>
-                    </button>
-                  </li>
-                </ol>
-              </nav>
-
+            <div class="process-inner">
               <div class="process-chapters">
-                <article class="process-chapter" data-chapter="0" data-active>
-                  <p class="process-step">01</p>
-                  <h3 class="process-heading">Find the gaps.</h3>
-                  <p class="process-copy">
-                    We map the funnel, the marketing you already do, and the channels that should be feeding it.
-                  </p>
-                  <figure class="artifact" data-reveal>
-                    <div class="paper">
-                      <header>
-                        <span>RSP / Audit</span>
-                        <span>Illustrative</span>
-                      </header>
-                      <h4>Channel findings</h4>
-                      <ul>
+                <article class="process-chapter" id="process-audit" data-chapter="0" data-active>
+                  <div class="process-copyblock">
+                    <p class="process-step">01 / Audit</p>
+                    <h3 class="process-heading">Find where customers drop off.</h3>
+                    <p class="process-copy">
+                      We map your channels and the path from first impression to enquiry.
+                    </p>
+                  </div>
+                  <div class="process-visual">
+                    <div class="scene" data-scene="0">
+                      <p class="scene-label">Illustrative campaign</p>
+                      <p class="scene-title">Customer journey</p>
+                      <ol class="journey">
                         <li>
+                          <span class="journey-num">01</span>
                           <b>Social</b>
-                          <span>Posted weekly. No CTA, no path to book.</span>
+                          <span>Posted weekly. No path to book.</span>
                         </li>
                         <li>
+                          <span class="journey-num">02</span>
                           <b>Website</b>
                           <span>Traffic lands. The next step is missing.</span>
                         </li>
-                        <li>
-                          <b>Email</b>
-                          <span>The list exists. It isn’t working.</span>
+                        <li class="is-flagged">
+                          <span class="journey-num">03</span>
+                          <b>Enquiry</b>
+                          <span>People watch, then have no reason to ask.</span>
                         </li>
+                      </ol>
+                      <p class="scene-note">Finding: people need stronger proof before they enquire.</p>
+                    </div>
+                  </div>
+                  <p class="process-get"><span>You get</span> A mapped funnel and channel audit.</p>
+                </article>
+
+                <article class="process-chapter" id="process-diagnose" data-chapter="1">
+                  <div class="process-copyblock">
+                    <p class="process-step">02 / Diagnose</p>
+                    <h3 class="process-heading">Know what to fix first.</h3>
+                    <p class="process-copy">
+                      We rank the gaps by their business impact.
+                    </p>
+                  </div>
+                  <div class="process-visual">
+                    <div class="scene" data-scene="1">
+                      <p class="scene-label">Illustrative campaign</p>
+                      <p class="scene-title">Ranked opportunities</p>
+                      <ol class="priorities">
+                        <li class="is-primary">
+                          <span class="priority-rank">01</span>
+                          <div>
+                            <p class="priority-kicker">Primary</p>
+                            <b>Stronger proof</b>
+                            <span>People need a customer story before they enquire.</span>
+                          </div>
+                        </li>
+                        <li>
+                          <span class="priority-rank">02</span>
+                          <div>
+                            <b>The right format</b>
+                            <span>The audience decides on video. The feed is stills.</span>
+                          </div>
+                        </li>
+                        <li>
+                          <span class="priority-rank">03</span>
+                          <div>
+                            <b>Better follow-up</b>
+                            <span>Email and ads aren’t using the work you already made.</span>
+                          </div>
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                  <p class="process-get"><span>You get</span> Three ranked opportunities, and why they matter.</p>
+                </article>
+
+                <article class="process-chapter" id="process-strategise" data-chapter="2">
+                  <div class="process-copyblock">
+                    <p class="process-step">03 / Strategise</p>
+                    <h3 class="process-heading">Give the month a clear plan.</h3>
+                    <p class="process-copy">
+                      We turn those priorities into a sequence of work.
+                    </p>
+                  </div>
+                  <div class="process-visual">
+                    <div class="scene" data-scene="2">
+                      <p class="scene-label">Illustrative campaign</p>
+                      <p class="scene-title">30-day sequence</p>
+                      <ol class="calendar">
+                        <li>
+                          <span class="calendar-week">Week 1</span>
+                          <b>Film</b>
+                          <span>Customer-story video. One session.</span>
+                          <em>From proof</em>
+                        </li>
+                        <li>
+                          <span class="calendar-week">Week 2</span>
+                          <b>Edit</b>
+                          <span>Hero cut, until approved.</span>
+                          <em>From format</em>
+                        </li>
+                        <li>
+                          <span class="calendar-week">Week 3</span>
+                          <b>Publish</b>
+                          <span>Covers, captions, cutdowns.</span>
+                          <em>From format</em>
+                        </li>
+                        <li>
+                          <span class="calendar-week">Week 4</span>
+                          <b>Amplify</b>
+                          <span>Email and ads on the piece.</span>
+                          <em>From follow-up</em>
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                  <p class="process-get"><span>You get</span> A 30-day campaign sequence.</p>
+                </article>
+
+                <article class="process-chapter" id="process-execute" data-chapter="3">
+                  <div class="process-copyblock">
+                    <p class="process-step">04 / Execute</p>
+                    <h3 class="process-heading">See the work go live.</h3>
+                    <p class="process-copy">
+                      We produce the content and put the plan into action.
+                    </p>
+                  </div>
+                  <div class="process-visual">
+                    <div class="scene scene--live" data-scene="3">
+                      <p class="scene-label">Illustrative campaign</p>
+                      <p class="scene-title">This month, live</p>
+                      <div class="live-hero">
+                        <img
+                          src="/work/straits-plantar.jpg"
+                          alt="Illustrative still from a customer-story video"
+                          width="787"
+                          height="1400"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <p class="live-meta">
+                          <span class="live-play" aria-hidden="true"></span>
+                          Customer story · 0:32
+                        </p>
+                      </div>
+                      <ul class="live-places">
+                        <li><b>Social</b><span>Posted to the calendar</span></li>
+                        <li><b>Email</b><span>Sent in the sequence</span></li>
+                        <li><b>Ads</b><span>Cut for paid placement</span></li>
                       </ul>
                     </div>
-                    <figcaption>You get: a mapped funnel and channel audit.</figcaption>
-                  </figure>
-                </article>
-
-                <article class="process-chapter" data-chapter="1">
-                  <p class="process-step">02</p>
-                  <h3 class="process-heading">Set the priorities.</h3>
-                  <p class="process-copy">
-                    We name the friction, then rank the opportunities by what would actually move the business.
-                  </p>
-                  <figure class="artifact" data-reveal>
-                    <div class="paper">
-                      <header>
-                        <span>RSP / Diagnose</span>
-                        <span>Illustrative</span>
-                      </header>
-                      <h4>Ranked opportunities</h4>
-                      <ol>
-                        <li>
-                          <b>Proof</b>
-                          <span>People watch, then have no reason to enquire.</span>
-                        </li>
-                        <li>
-                          <b>Format</b>
-                          <span>The audience decides on video; the feed is stills.</span>
-                        </li>
-                        <li>
-                          <b>Follow-up</b>
-                          <span>Email and ads are not using the work you already paid to make.</span>
-                        </li>
-                      </ol>
-                    </div>
-                    <figcaption>You get: three ranked opportunities, with the business implication of each.</figcaption>
-                  </figure>
-                </article>
-
-                <article class="process-chapter" data-chapter="2">
-                  <p class="process-step">03</p>
-                  <h3 class="process-heading">Build the plan.</h3>
-                  <p class="process-copy">
-                    A 30-day sequence: what to film, what to publish, and how it turns into enquiries.
-                  </p>
-                  <figure class="artifact" data-reveal>
-                    <div class="paper">
-                      <header>
-                        <span>RSP / Plan</span>
-                        <span>Illustrative</span>
-                      </header>
-                      <h4>Campaign sequence</h4>
-                      <ol>
-                        <li>
-                          <b>Film day</b>
-                          <span>Shot list, location, talent — one session.</span>
-                        </li>
-                        <li>
-                          <b>Hero video</b>
-                          <span>One mobile-ready cut, edited until approved.</span>
-                        </li>
-                        <li>
-                          <b>Publishing kit</b>
-                          <span>Covers, captions, and cutdowns for the calendar.</span>
-                        </li>
-                        <li>
-                          <b>Amplify</b>
-                          <span>Email and ads on the piece that earns the clicks.</span>
-                        </li>
-                      </ol>
-                    </div>
-                    <figcaption>You get: a 30-day campaign sequence.</figcaption>
-                  </figure>
-                </article>
-
-                <article class="process-chapter" data-chapter="3">
-                  <p class="process-step">04</p>
-                  <h3 class="process-heading">Put it to work.</h3>
-                  <p class="process-copy">
-                    We shoot, edit, and publish the first video — then keep the machine running each month.
-                  </p>
-                  <figure class="artifact artifact-photo" data-reveal>
-                    <p class="artifact-source">From the work — Straits Podiatry</p>
-                    <img
-                      src="/work/straits-plantar.jpg"
-                      alt="Still from a Straits Podiatry video on plantar fasciitis, with the title on screen"
-                      width="787"
-                      height="1400"
-                      loading="lazy"
-                    />
-                    <figcaption>You get: one mobile-ready video, every month.</figcaption>
-                  </figure>
+                  </div>
+                  <p class="process-get"><span>You get</span> One mobile-ready video each month, with the agreed marketing work around it.</p>
                 </article>
               </div>
+
+              <aside class="process-stage" data-process-stage hidden>
+                <div class="campaign">
+                  <header class="campaign-head">
+                    <p class="campaign-price">SGD $1,000 / month</p>
+                    <div class="campaign-id">
+                      <p class="campaign-kicker">Illustrative campaign</p>
+                      <p class="campaign-title">Your campaign</p>
+                    </div>
+                  </header>
+                  <div class="campaign-scenes" data-campaign-scenes></div>
+                </div>
+              </aside>
             </div>
+          </div>
+
+          <div class="process-close" data-reveal>
+            <h2>Your next month of marketing, handled.</h2>
+            <p class="process-close-lede">
+              Strategy, production, and publishing with one coordinated team.
+            </p>
+            <p class="process-close-price">SGD $1,000 / month · Month to month</p>
+            <a class="btn btn-primary" href="#book">
+              <span>Book a call</span>
+              <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path class="arrow-head" d="M9 6l7 6-7 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path class="arrow-shaft" d="M16 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </a>
+            <p class="process-close-note">Ad spend and extra film days are separate.</p>
+            <a class="process-scope" href="#offer">View full scope</a>
           </div>
         </section>
 
@@ -391,15 +426,6 @@
 
             <article class="case">
               <div class="case-layout">
-                <figure class="case-poster">
-                  <img
-                    src="/work/straits-plantar.jpg"
-                    alt="Still from a Straits Podiatry video on plantar fasciitis, with the title on screen"
-                    width="787"
-                    height="1400"
-                    loading="lazy"
-                  />
-                </figure>
                 <div class="case-body">
                   <p class="case-client">Straits Podiatry · Elliott Yeldham</p>
                   <h3>A clinic that now gets booked from the feed.</h3>
@@ -421,32 +447,32 @@
                       <dd>154 → 95.9K in twelve months</dd>
                     </div>
                   </dl>
-                  <div class="case-proof">
-                    <figure>
-                      <a href="/work/straits-month-1.jpg" target="_blank" rel="noopener noreferrer">
-                        <img
-                          src="/work/straits-month-1.jpg"
-                          alt="TikTok profile @podiatristelliott after the first month: 10 followers, 154 likes"
-                          width="506"
-                          height="900"
-                          loading="lazy"
-                        />
-                      </a>
-                      <figcaption>Month 1 on TikTok</figcaption>
-                    </figure>
-                    <figure>
-                      <a href="/work/straits-month-12.jpg" target="_blank" rel="noopener noreferrer">
-                        <img
-                          src="/work/straits-month-12.jpg"
-                          alt="TikTok profile @podiatristelliott after twelve months: 7,125 followers, 95.9K likes"
-                          width="506"
-                          height="900"
-                          loading="lazy"
-                        />
-                      </a>
-                      <figcaption>Month 12 on TikTok</figcaption>
-                    </figure>
-                  </div>
+                </div>
+                <div class="case-proof">
+                  <figure>
+                    <a href="/work/straits-month-1.jpg" target="_blank" rel="noopener noreferrer">
+                      <img
+                        src="/work/straits-month-1.jpg"
+                        alt="TikTok profile @podiatristelliott after the first month: 10 followers, 154 likes"
+                        width="506"
+                        height="900"
+                        loading="lazy"
+                      />
+                    </a>
+                    <figcaption>Month 1 on TikTok</figcaption>
+                  </figure>
+                  <figure>
+                    <a href="/work/straits-month-12.jpg" target="_blank" rel="noopener noreferrer">
+                      <img
+                        src="/work/straits-month-12.jpg"
+                        alt="TikTok profile @podiatristelliott after twelve months: 7,125 followers, 95.9K likes"
+                        width="506"
+                        height="900"
+                        loading="lazy"
+                      />
+                    </a>
+                    <figcaption>Month 12 on TikTok</figcaption>
+                  </figure>
                 </div>
               </div>
               <blockquote class="case-quote">
@@ -515,7 +541,14 @@
 
         <section class="retainer" id="offer" aria-labelledby="retainer-title" data-reveal>
           <div class="retainer-inner">
-            <h2 id="retainer-title">Your marketing team. One monthly fee.</h2>
+            <div class="retainer-head">
+              <p class="retainer-kicker">The offer</p>
+              <h2 id="retainer-title">
+                <span>Your marketing team.</span>
+                <span class="retainer-title-alt">One monthly fee.</span>
+              </h2>
+              <p class="retainer-lede">Everything below, every month, for one price.</p>
+            </div>
 
             <div class="retainer-layout">
               <div class="retainer-includes">

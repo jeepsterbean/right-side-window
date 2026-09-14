@@ -118,16 +118,6 @@
   gap: 1.75rem;
 }
 
-.case-poster {
-  margin: 0;
-}
-
-.case-poster img {
-  width: min(100%, 20rem);
-  height: auto;
-  background: var(--bg-media);
-}
-
 .case-client {
   margin: 0 0 0.45rem;
   font-size: 0.8125rem;
@@ -156,7 +146,7 @@
 }
 
 .case-metrics {
-  margin: 1.35rem 0 0;
+  margin: 1.5rem 0 0;
   display: grid;
   gap: 0.85rem;
 }
@@ -177,11 +167,10 @@
 }
 
 .case-proof {
-  margin-top: 1.35rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
-  max-width: 32rem;
+  max-width: 36rem;
 }
 
 .case-proof figure {
@@ -278,14 +267,33 @@
   padding: 5rem 0 4.5rem;
 }
 
+.retainer-head .retainer-kicker {
+  margin-bottom: 0.55rem;
+}
+
 .retainer h2 {
   margin: 0;
-  max-width: 16ch;
-  font-size: clamp(2rem, 4.8vw, 3.25rem);
+  font-size: clamp(2.375rem, 1.4rem + 5vw, 4.5rem);
   font-weight: 600;
   letter-spacing: -0.04em;
   line-height: 1.06;
-  text-wrap: balance;
+}
+
+.retainer h2 span {
+  display: block;
+}
+
+.retainer-title-alt {
+  color: var(--text-secondary);
+}
+
+.retainer-lede {
+  margin: 0.95rem 0 0;
+  max-width: 28rem;
+  font-size: var(--text-body-xl);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
 }
 
 .retainer-layout {
@@ -310,9 +318,11 @@
 
 .retainer-includes h3 {
   margin: 0;
-  font-size: 1.125rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: -0.03em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cta);
 }
 
 .retainer-includes ul {
@@ -345,7 +355,7 @@
 
 .retainer-price {
   margin: 0.35rem 0 1.15rem;
-  font-size: clamp(1.75rem, 4vw, 2.35rem);
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
   font-weight: 500;
   letter-spacing: -0.04em;
 }
@@ -599,6 +609,16 @@
     gap: 1.75rem;
   }
 
+  .case-metrics {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.15rem;
+  }
+
+  .case-proof {
+    max-width: 42rem;
+    gap: 1rem;
+  }
+
   .work-row {
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
@@ -663,14 +683,19 @@
   }
 
   .case-layout {
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 3rem;
+    grid-template-columns: minmax(0, 0.92fr) minmax(18rem, 0.78fr);
+    gap: 3.25rem;
     align-items: start;
   }
 
-  .case-poster img {
-    width: auto;
-    max-height: 35rem;
+  .case-metrics {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .case-proof {
+    max-width: none;
+    gap: 0.9rem;
   }
 
   .case-quote {
@@ -687,6 +712,7 @@
   }
 
   .retainer-layout {
+    margin-top: 3.5rem;
     grid-template-columns: minmax(0, 1.5fr) minmax(17rem, 1fr);
     gap: 4.5rem;
     align-items: start;
