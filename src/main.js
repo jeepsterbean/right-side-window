@@ -147,110 +147,41 @@ function setupNav() {
 }
 
 /**
- * Track process chapters, pin the campaign preview on desktop, and switch scenes.
+ * Mark the chapter whose step label has reached the sticky pricing question.
  */
 function setupScrolly() {
   const root = document.querySelector('[data-scrolly]');
   if (!root) return;
 
+  const pin = root.querySelector('.process-pin-inner');
   const chapters = [...root.querySelectorAll('[data-chapter]')];
-  const marks = [...root.querySelectorAll('[data-step-mark]')];
-  const scenes = [...root.querySelectorAll('[data-scene]')];
-  const slots = chapters.map((chapter) => chapter.querySelector('.process-visual'));
-  const stage = root.querySelector('[data-process-stage]');
-  const stageScenes = root.querySelector('[data-campaign-scenes]');
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const desktop = window.matchMedia('(min-width: 1024px)');
-  const tall = window.matchMedia('(min-height: 720px)');
 
-  let sticky = false;
-
-  const useSticky = () => desktop.matches && tall.matches && !motion.matches;
-
-  /**
-   * Keep a single set of scenes: stacked in chapters, or overlaid in the sticky stage.
-   */
-  const placeScenes = (nextSticky) => {
-    scenes.forEach((scene, i) => {
-      const dest = nextSticky ? stageScenes : slots[i];
-      if (dest && scene.parentElement !== dest) dest.appendChild(scene);
-    });
-    if (stage) stage.hidden = !nextSticky;
-    root.toggleAttribute('data-sticky-stage', nextSticky);
-  };
-
-  /**
-   * Show every scene in stacked layout; one scene in the sticky preview.
-   */
-  const paintScenes = (index, animate) => {
-    scenes.forEach((scene, i) => {
-      const on = !sticky || i === index;
-      scene.toggleAttribute('inert', sticky && !on);
-      scene.setAttribute('aria-hidden', sticky && !on ? 'true' : 'false');
-      if (!sticky) {
-        scene.classList.add('is-shown');
-        return;
-      }
-      if (on) {
-        if (animate) scene.classList.remove('is-shown');
-        if (animate) void scene.offsetWidth;
-        scene.classList.add('is-shown');
-      } else {
-        scene.classList.remove('is-shown');
-      }
-    });
-  };
-
-  const setStep = (index, animate = true) => {
-    if (root.dataset.step === String(index)) return;
+  const setStep = (index) => {
     root.dataset.step = String(index);
     chapters.forEach((chapter, i) => {
       chapter.toggleAttribute('data-active', i === index);
     });
-    marks.forEach((mark) => {
-      const i = Number(mark.dataset.stepMark);
-      if (i === index) mark.setAttribute('aria-current', 'step');
-      else mark.removeAttribute('aria-current');
-      mark.classList.toggle('is-passed', i <= index);
-    });
-    paintScenes(index, animate && sticky && !motion.matches);
   };
 
   /**
-   * Map scroll to the chapter whose heading has reached the reading line.
+   * Active chapter is the last one whose label has crossed the pin's top edge.
    */
   const update = () => {
-    const nextSticky = useSticky();
-    if (nextSticky !== sticky) {
-      sticky = nextSticky;
-      placeScenes(sticky);
-      paintScenes(Number(root.dataset.step) || 0, false);
+    if (!desktop.matches || motion.matches) {
+      chapters.forEach((chapter) => chapter.toggleAttribute('data-active', true));
+      return;
     }
 
-    const rect = (root.querySelector('.process-inner') ?? root).getBoundingClientRect();
-    const range = rect.height - window.innerHeight;
-    const progress = range <= 0 ? 1 : Math.min(1, Math.max(0, -rect.top / range));
-    root.style.setProperty('--process-progress', progress.toFixed(4));
-
-    const probe = window.innerHeight * 0.4;
+    const probe = pin ? pin.getBoundingClientRect().top + 36 : window.innerHeight * 0.22;
     let current = 0;
     chapters.forEach((chapter, i) => {
-      const heading = chapter.querySelector('.process-heading') ?? chapter;
-      if (heading.getBoundingClientRect().top <= probe) current = i;
+      const label = chapter.querySelector('.process-step') ?? chapter;
+      if (label.getBoundingClientRect().top <= probe) current = i;
     });
     setStep(current);
   };
-
-  marks.forEach((mark) => {
-    mark.addEventListener('click', () => {
-      const index = Number(mark.dataset.stepMark);
-      const target = chapters[index]?.querySelector('.process-heading') ?? chapters[index];
-      if (!target) return;
-      const top = target.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.32;
-      window.scrollTo({ top: Math.max(0, top), behavior: 'instant' });
-      setStep(index, sticky && !motion.matches);
-    });
-  });
 
   let ticking = false;
   const onScroll = () => {
@@ -266,12 +197,9 @@ function setupScrolly() {
   window.addEventListener('resize', onScroll);
   motion.addEventListener('change', onScroll);
   desktop.addEventListener('change', onScroll);
-  tall.addEventListener('change', onScroll);
 
-  sticky = useSticky();
-  placeScenes(sticky);
   root.dataset.step = '';
-  setStep(0, false);
+  setStep(0);
   update();
 }
 
