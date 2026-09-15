@@ -6,34 +6,34 @@ import './story.css';
 document.documentElement.classList.add('js');
 
 const CLIENTS = [
-  { src: '/logos/asics.png', name: 'ASICS' },
-  { src: '/logos/puma.png', name: 'Puma' },
-  { src: '/logos/brooks-running.png', name: 'Brooks' },
-  { src: '/logos/keen-footwear.png', name: 'KEEN' },
-  { src: '/logos/lamborghini.png', name: 'Lamborghini' },
-  { src: '/logos/atoms.png', name: 'Atoms' },
-  { src: '/logos/feelgrounds.jpg', name: 'Feelgrounds' },
-  { src: '/logos/nus.png', name: 'NUS' },
-  { src: '/logos/smu.png', name: 'SMU' },
-  { src: '/logos/singapore-polytechnic.jpg', name: 'Singapore Polytechnic' },
-  { src: '/logos/burpple.png', name: 'Burpple' },
-  { src: '/logos/identitee.png', name: 'identiTEE' },
-  { src: '/logos/kaamp.png', name: 'KAAMP' },
-  { src: '/logos/fireball-whiskey.png', name: 'Fireball' },
-  { src: '/logos/bastille.png', name: 'Bastille' },
-  { src: '/logos/bunka.png', name: 'Bunka' },
-  { src: '/logos/british-hainan.png', name: 'British Hainan' },
-  { src: '/logos/tcm.png', name: 'TCM' },
-  { src: '/logos/straits-podiatry.png', name: 'Straits Podiatry' },
-  { src: '/logos/new-healthway.png', name: 'Healthway' },
-  { src: '/logos/sg100-foundation.png', name: 'SG100 Foundation' },
-  { src: '/logos/speech-academy.png', name: 'Speech Academy' },
-  { src: '/logos/success-frontiers.png', name: 'Success Frontiers' },
-  { src: '/logos/trainium.png', name: 'Trainium' },
+  { src: '/logos/asics.webp', name: 'ASICS' },
+  { src: '/logos/puma.webp', name: 'Puma' },
+  { src: '/logos/brooks-running.webp', name: 'Brooks' },
+  { src: '/logos/keen-footwear.webp', name: 'KEEN' },
+  { src: '/logos/lamborghini.webp', name: 'Lamborghini' },
+  { src: '/logos/atoms.webp', name: 'Atoms' },
+  { src: '/logos/feelgrounds.webp', name: 'Feelgrounds' },
+  { src: '/logos/nus.webp', name: 'NUS' },
+  { src: '/logos/smu.webp', name: 'SMU' },
+  { src: '/logos/singapore-polytechnic.webp', name: 'Singapore Polytechnic' },
+  { src: '/logos/burpple.webp', name: 'Burpple' },
+  { src: '/logos/identitee.webp', name: 'identiTEE' },
+  { src: '/logos/kaamp.webp', name: 'KAAMP' },
+  { src: '/logos/fireball-whiskey.webp', name: 'Fireball' },
+  { src: '/logos/bastille.webp', name: 'Bastille' },
+  { src: '/logos/bunka.webp', name: 'Bunka' },
+  { src: '/logos/british-hainan.webp', name: 'British Hainan' },
+  { src: '/logos/tcm.webp', name: 'TCM' },
+  { src: '/logos/straits-podiatry.webp', name: 'Straits Podiatry' },
+  { src: '/logos/new-healthway.webp', name: 'Healthway' },
+  { src: '/logos/sg100-foundation.webp', name: 'SG100 Foundation' },
+  { src: '/logos/speech-academy.webp', name: 'Speech Academy' },
+  { src: '/logos/success-frontiers.webp', name: 'Success Frontiers' },
+  { src: '/logos/trainium.webp', name: 'Trainium' },
   { src: '/logos/peak.svg', name: 'Peak' },
-  { src: '/logos/superfly.png', name: 'Superfly' },
-  { src: '/logos/tpi.png', name: 'TPI' },
-  { src: '/logos/muses.png', name: 'Muses' },
+  { src: '/logos/superfly.webp', name: 'Superfly' },
+  { src: '/logos/tpi.webp', name: 'TPI' },
+  { src: '/logos/muses.webp', name: 'Muses' },
 ];
 
 const LOGO_COLUMNS = 7;
@@ -382,26 +382,33 @@ function setupScrollyRoot(root) {
     }
   };
 
+  return update;
+}
+
+/**
+ * One scroll/resize listener for every sticky stage so four roots
+ * don't each force their own layout pass per frame.
+ */
+function setupScrolly() {
+  const updates = [...document.querySelectorAll('[data-scrolly]')].map(setupScrollyRoot).filter(Boolean);
+  if (!updates.length) return;
+
   let ticking = false;
   const onScroll = () => {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      update();
+      updates.forEach((update) => update());
       ticking = false;
     });
   };
 
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll);
-  motion.addEventListener('change', onScroll);
-  desktop.addEventListener('change', onScroll);
+  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', onScroll);
+  window.matchMedia('(min-width: 1024px)').addEventListener('change', onScroll);
 
-  update();
-}
-
-function setupScrolly() {
-  document.querySelectorAll('[data-scrolly]').forEach(setupScrollyRoot);
+  onScroll();
 }
 
 /**
@@ -453,6 +460,35 @@ function setupWorkCarousel() {
   if (!root) return;
 
   const section = root.closest('.work-more') || root;
+  const start = () => {
+    if (root.dataset.carouselReady != null) return;
+    root.dataset.carouselReady = '';
+    initWorkCarousel(root, section);
+  };
+
+  const box = section.getBoundingClientRect();
+  if (box.top < window.innerHeight + 800) {
+    start();
+    return;
+  }
+
+  if (typeof IntersectionObserver !== 'function') {
+    start();
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      start();
+      io.disconnect();
+    },
+    { rootMargin: '800px 0px' },
+  );
+  io.observe(section);
+}
+
+function initWorkCarousel(root, section) {
   const track = root.querySelector('.work-row');
   const prev = document.querySelector('[data-carousel-prev]');
   const next = document.querySelector('[data-carousel-next]');

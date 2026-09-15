@@ -1051,6 +1051,7 @@
     opacity: 1;
     transform: scale(1);
     transform-origin: 50% 48%;
+    contain: paint;
     transition:
       opacity var(--work-title) var(--ease-out-expo),
       transform var(--work-title) var(--ease-out-expo);
@@ -1059,6 +1060,10 @@
   .js .work-more[data-title="pin"] .work-more-collage {
     opacity: 0;
     transform: scale(1.12);
+  }
+
+  .js .work-more:not([data-title="open"]) .work-more-ghost {
+    animation: none;
   }
 
   .js .work-more-ghost {

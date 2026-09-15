@@ -32,9 +32,17 @@
     <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
     <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
     <link
-      href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,520,600,700&display=swap"
       rel="stylesheet"
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,520,600,700&display=swap"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,520,600,700&display=swap"
+      />
+    </noscript>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -66,10 +74,14 @@
             <a class="brand" href="/" aria-label="Right Side People home">
               <img
                 class="brand-logo"
-                src="/logo.png"
+                src="/logo-160.webp"
+                srcset="/logo-80.webp 80w, /logo-160.webp 160w"
+                sizes="3.5rem"
                 alt=""
                 width="148"
                 height="109"
+                decoding="async"
+                fetchpriority="high"
               />
             </a>
             <span class="nav-rule" aria-hidden="true"></span>
@@ -164,11 +176,11 @@
               <div class="logo-rows" data-logo-rows></div>
               <noscript>
                 <div class="logo-row logo-row--static">
-                  <div class="logo-slot"><img class="logo-mark" src="/logos/asics.png" alt="ASICS" width="120" height="36" /></div>
-                  <div class="logo-slot"><img class="logo-mark" src="/logos/puma.png" alt="Puma" width="120" height="36" /></div>
-                  <div class="logo-slot"><img class="logo-mark" src="/logos/nus.png" alt="NUS" width="120" height="36" /></div>
-                  <div class="logo-slot"><img class="logo-mark" src="/logos/straits-podiatry.png" alt="Straits Podiatry" width="120" height="36" /></div>
-                  <div class="logo-slot"><img class="logo-mark" src="/logos/british-hainan.png" alt="British Hainan" width="120" height="36" /></div>
+                  <div class="logo-slot"><img class="logo-mark" src="/logos/asics.webp" alt="ASICS" width="120" height="36" /></div>
+                  <div class="logo-slot"><img class="logo-mark" src="/logos/puma.webp" alt="Puma" width="120" height="36" /></div>
+                  <div class="logo-slot"><img class="logo-mark" src="/logos/nus.webp" alt="NUS" width="120" height="36" /></div>
+                  <div class="logo-slot"><img class="logo-mark" src="/logos/straits-podiatry.webp" alt="Straits Podiatry" width="120" height="36" /></div>
+                  <div class="logo-slot"><img class="logo-mark" src="/logos/british-hainan.webp" alt="British Hainan" width="120" height="36" /></div>
                 </div>
               </noscript>
             </div>
@@ -321,11 +333,14 @@
 
                 <div class="team-photo">
                   <img
-                    src="/team/workforce.png"
+                    src="/team/workforce-1100.webp"
+                    srcset="/team/workforce-1100.webp 1100w, /team/workforce-1800.webp 1800w"
+                    sizes="(min-width: 1100px) 1100px, 100vw"
                     alt="The Right Side People team standing together"
                     width="1800"
                     height="450"
                     loading="lazy"
+                    decoding="async"
                   />
                 </div>
               </div>
@@ -396,11 +411,12 @@
                     <figure>
                       <a href="/work/straits-month-1.jpg" target="_blank" rel="noopener noreferrer" aria-label="Month 1 TikTok screenshot (opens in a new tab)">
                         <img
-                          src="/work/straits-month-1.jpg"
+                          src="/work/straits-month-1.webp"
                           alt="TikTok profile @podiatristelliott after the first month: 10 followers, 154 likes"
                           width="506"
                           height="900"
                           loading="lazy"
+                          decoding="async"
                         />
                       </a>
                       <figcaption>Month 1</figcaption>
@@ -408,11 +424,12 @@
                     <figure>
                       <a href="/work/straits-month-12.jpg" target="_blank" rel="noopener noreferrer" aria-label="Month 12 TikTok screenshot (opens in a new tab)">
                         <img
-                          src="/work/straits-month-12.jpg"
+                          src="/work/straits-month-12.webp"
                           alt="TikTok profile @podiatristelliott after twelve months: 7,125 followers, 95.9K likes"
                           width="506"
                           height="900"
                           loading="lazy"
+                          decoding="async"
                         />
                       </a>
                       <figcaption>Month 12</figcaption>
@@ -483,12 +500,12 @@
             <div class="work-more-stage">
               <div class="work-more-atmos" aria-hidden="true">
                 <div class="work-more-collage">
-                  <img class="work-more-ghost" data-ghost="0" src="/work/british-hainan.jpg" alt="" width="787" height="1400" decoding="async" loading="lazy" />
-                  <img class="work-more-ghost" data-ghost="1" src="/work/birkenstock.jpg" alt="" width="787" height="1400" decoding="async" loading="lazy" />
-                  <img class="work-more-ghost" data-ghost="2" src="/work/frido.jpg" alt="" width="787" height="1400" decoding="async" loading="lazy" />
-                  <img class="work-more-ghost" data-ghost="3" src="/work/new-balance.jpg" alt="" width="787" height="1400" decoding="async" loading="lazy" />
-                  <img class="work-more-ghost" data-ghost="4" src="/work/straits-plantar.jpg" alt="" width="787" height="1400" decoding="async" loading="lazy" />
-                  <img class="work-more-ghost" data-ghost="5" src="/work/british-hainan-ep.jpg" alt="" width="787" height="1400" decoding="async" loading="lazy" />
+                  <img class="work-more-ghost" data-ghost="0" src="/work/british-hainan-400.webp" alt="" width="400" height="711" decoding="async" loading="lazy" />
+                  <img class="work-more-ghost" data-ghost="1" src="/work/birkenstock-400.webp" alt="" width="400" height="711" decoding="async" loading="lazy" />
+                  <img class="work-more-ghost" data-ghost="2" src="/work/frido-400.webp" alt="" width="400" height="711" decoding="async" loading="lazy" />
+                  <img class="work-more-ghost" data-ghost="3" src="/work/new-balance-400.webp" alt="" width="400" height="711" decoding="async" loading="lazy" />
+                  <img class="work-more-ghost" data-ghost="4" src="/work/straits-plantar-400.webp" alt="" width="400" height="711" decoding="async" loading="lazy" />
+                  <img class="work-more-ghost" data-ghost="5" src="/work/british-hainan-ep-400.webp" alt="" width="400" height="711" decoding="async" loading="lazy" />
                 </div>
                 <div class="work-more-wash"></div>
               </div>
@@ -540,11 +557,14 @@
                   <li>
                     <figure>
                       <img
-                        src="/work/british-hainan.jpg"
+                        src="/work/british-hainan-800.webp"
+                        srcset="/work/british-hainan-400.webp 400w, /work/british-hainan-800.webp 800w"
+                        sizes="(min-width: 1024px) 18.5rem, (min-width: 768px) 12.5rem, 9.5rem"
                         alt="British Hainan campaign still of herbal mutton soup, with Chinese title on screen"
                         width="787"
                         height="1400"
                         loading="lazy"
+                        decoding="async"
                       />
                       <figcaption>
                         <span>British Hainan</span>
@@ -555,11 +575,14 @@
                   <li>
                     <figure>
                       <img
-                        src="/work/birkenstock.jpg"
+                        src="/work/birkenstock-800.webp"
+                        srcset="/work/birkenstock-400.webp 400w, /work/birkenstock-800.webp 800w"
+                        sizes="(min-width: 1024px) 18.5rem, (min-width: 768px) 12.5rem, 9.5rem"
                         alt="House of Birkenstock in-store still with two people standing in the shop"
                         width="787"
                         height="1400"
                         loading="lazy"
+                        decoding="async"
                       />
                       <figcaption>
                         <span>House of Birkenstock</span>
@@ -570,11 +593,14 @@
                   <li>
                     <figure>
                       <img
-                        src="/work/frido.jpg"
+                        src="/work/frido-800.webp"
+                        srcset="/work/frido-400.webp 400w, /work/frido-800.webp 800w"
+                        sizes="(min-width: 1024px) 18.5rem, (min-width: 768px) 12.5rem, 9.5rem"
                         alt="Frido campaign still of a presenter holding a Frido Barefoot sock shoe box"
                         width="787"
                         height="1400"
                         loading="lazy"
+                        decoding="async"
                       />
                       <figcaption>
                         <span>Frido</span>
@@ -585,11 +611,14 @@
                   <li>
                     <figure>
                       <img
-                        src="/work/british-hainan-ep.jpg"
+                        src="/work/british-hainan-ep-800.webp"
+                        srcset="/work/british-hainan-ep-400.webp 400w, /work/british-hainan-ep-800.webp 800w"
+                        sizes="(min-width: 1024px) 18.5rem, (min-width: 768px) 12.5rem, 9.5rem"
                         alt="British Hainan still of the owner pointing to a two-metre panorama on the restaurant wall"
                         width="787"
                         height="1400"
                         loading="lazy"
+                        decoding="async"
                       />
                       <figcaption>
                         <span>British Hainan</span>
@@ -600,11 +629,14 @@
                   <li>
                     <figure>
                       <img
-                        src="/work/new-balance.jpg"
+                        src="/work/new-balance-800.webp"
+                        srcset="/work/new-balance-400.webp 400w, /work/new-balance-800.webp 800w"
+                        sizes="(min-width: 1024px) 18.5rem, (min-width: 768px) 12.5rem, 9.5rem"
                         alt="New Balance campaign still of a presenter unboxing a neon running shoe"
                         width="787"
                         height="1400"
                         loading="lazy"
+                        decoding="async"
                       />
                       <figcaption>
                         <span>New Balance</span>
@@ -615,11 +647,14 @@
                   <li>
                     <figure>
                       <img
-                        src="/work/straits-plantar.jpg"
+                        src="/work/straits-plantar-800.webp"
+                        srcset="/work/straits-plantar-400.webp 400w, /work/straits-plantar-800.webp 800w"
+                        sizes="(min-width: 1024px) 18.5rem, (min-width: 768px) 12.5rem, 9.5rem"
                         alt="Straits Podiatry still of shockwave treatment on a heel, titled Plantar Fasciitis"
                         width="787"
                         height="1400"
                         loading="lazy"
+                        decoding="async"
                       />
                       <figcaption>
                         <span>Straits Podiatry</span>
