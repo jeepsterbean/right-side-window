@@ -1,4 +1,11 @@
 .process {
+  --text-section: clamp(1.875rem, 1.2rem + 3.4vw, 2.25rem);
+  --text-subhead: clamp(1.375rem, 1.15rem + 1.2vw, 1.625rem);
+  --text-body: 1.0625rem;
+  --text-caption: 0.8125rem;
+  --space-section: 4rem;
+  --space-heading: 0.85rem;
+  --space-chapter: 2.25rem;
   --process-views: 6;
   --process-nav: 5.25rem;
   --process-beat: 450ms;
@@ -40,7 +47,7 @@
   width: 100%;
   max-width: var(--page-max);
   margin-inline: auto;
-  padding: 5.5rem var(--page-gutter) 4.25rem;
+  padding: var(--space-section) var(--page-gutter) 3.25rem;
 }
 
 .process-question {
@@ -50,12 +57,21 @@
   column-gap: 0.22em;
   row-gap: 0.06em;
   margin: 0;
-  font-size: clamp(1.05rem, 0.45rem + 2.8vw, 1.65rem);
+  font-size: var(--text-section);
   font-weight: 700;
-  letter-spacing: -0.05em;
-  line-height: 1.02;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
   text-align: center;
+  text-wrap: balance;
   overflow-wrap: anywhere;
+}
+
+.process-break {
+  display: block;
+  flex-basis: 100%;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
 }
 
 .process-word {
@@ -70,47 +86,78 @@
 }
 
 .process-views {
-  margin-top: 2.5rem;
+  margin-top: 2rem;
   display: grid;
-  gap: 3.25rem;
+  gap: 0;
+}
+
+.process-chapter:not(.process-chapter--close) {
+  position: relative;
+  padding: 0 0 var(--space-chapter) 1.35rem;
+  border-inline-start: 1px solid oklch(32% 0.04 var(--hue) / 0.2);
+}
+
+.process-chapter[data-chapter="3"] {
+  padding-bottom: 0.35rem;
+}
+
+.process-chapter:not(.process-chapter--close)::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: -3.5px;
+  top: 0.45em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-primary);
 }
 
 .process-id {
-  margin: 0 0 1.15rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin: 0 0 0.5rem;
 }
 
 .process-num {
-  margin: 0 0 0 -0.06em;
-  font-size: clamp(4.25rem, 2.4rem + 12vw, 5.5rem);
+  margin: 0;
+  font-size: var(--text-caption);
   font-weight: 700;
-  letter-spacing: -0.08em;
-  line-height: 0.78;
+  letter-spacing: 0.08em;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
+.process-num::after {
+  content: " ·";
+}
+
 .process-verb {
-  margin: 0.12em 0 0;
-  font-size: clamp(2rem, 1.4rem + 2.4vw, 2.5rem);
-  font-weight: 700;
-  letter-spacing: -0.045em;
+  margin: 0;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.12em;
   line-height: 1;
+  text-transform: uppercase;
+  color: var(--text-secondary);
 }
 
 .process-heading {
   margin: 0;
-  font-size: clamp(1.65rem, 1.35rem + 1.4vw, 2rem);
+  font-size: var(--text-subhead);
   font-weight: 700;
-  letter-spacing: -0.05em;
-  line-height: 1.08;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  text-wrap: balance;
   overflow-wrap: anywhere;
 }
 
 .process-copy {
-  margin: 0.9rem 0 0;
+  margin: var(--space-heading) 0 0;
   max-width: 28rem;
-  font-size: 1.0625rem;
+  font-size: var(--text-body);
   font-weight: 400;
-  line-height: 1.55;
+  line-height: 1.5;
   color: var(--text-secondary);
   overflow-wrap: anywhere;
 }
@@ -139,6 +186,7 @@
   letter-spacing: -0.05em;
   line-height: 1.02;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .process-close-em {
@@ -153,14 +201,15 @@
 }
 
 .process-close-price {
-  margin: 1.15rem 0 0;
+  margin: 0.85rem 0 0;
   max-width: 36rem;
-  font-size: 0.8125rem;
+  font-size: var(--text-caption);
   font-weight: 520;
   letter-spacing: 0.12em;
   line-height: 1.55;
   text-transform: uppercase;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .process-close-break {
@@ -181,17 +230,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
-  margin-top: 1.65rem;
+  gap: 0.3rem;
+  margin-top: 1.1rem;
 }
 
 .process-close-note {
   margin: 0;
   max-width: 36ch;
-  font-size: 0.875rem;
+  font-size: var(--text-caption);
   font-weight: 400;
   line-height: 1.45;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .process-scope {
@@ -211,7 +261,8 @@
   color: var(--process-close-ink);
   background: var(--process-plum);
   margin-inline: calc(var(--page-gutter) * -1);
-  padding: 3.25rem var(--page-gutter) 3.5rem;
+  margin-top: 2.5rem;
+  padding: 2.75rem var(--page-gutter) 2.85rem;
 }
 
 .process-chapter--close .process-close-note {
@@ -225,7 +276,9 @@
 }
 
 .process-chapter--close .btn-primary {
-  margin-top: 1.85rem;
+  margin-top: 1.15rem;
+  width: 100%;
+  max-width: 22rem;
   background: var(--process-close-ink);
   color: var(--process-plum);
   border-color: var(--process-close-ink);
@@ -256,6 +309,10 @@
     padding-bottom: 5.5rem;
   }
 
+  .process-break {
+    display: none;
+  }
+
   .process-question {
     font-size: clamp(2.35rem, 4.2vw, 3.25rem);
   }
@@ -263,6 +320,39 @@
   .process-views {
     margin-top: 3.25rem;
     gap: 4.5rem;
+  }
+
+  .process-chapter:not(.process-chapter--close) {
+    padding: 0;
+    border-inline-start: 0;
+  }
+
+  .process-chapter:not(.process-chapter--close)::before {
+    content: none;
+  }
+
+  .process-id {
+    display: block;
+    margin: 0 0 1.15rem;
+  }
+
+  .process-num {
+    margin: 0 0 0 -0.06em;
+    font-size: clamp(4.25rem, 2.4rem + 12vw, 5.5rem);
+    letter-spacing: -0.08em;
+    line-height: 0.78;
+  }
+
+  .process-num::after {
+    content: none;
+  }
+
+  .process-verb {
+    margin: 0.12em 0 0;
+    font-size: clamp(2rem, 1.4rem + 2.4vw, 2.5rem);
+    letter-spacing: -0.045em;
+    text-transform: none;
+    color: inherit;
   }
 
   .process-heading {
@@ -284,7 +374,13 @@
     margin-top: 1.35rem;
   }
 
+  .process-chapter--close {
+    margin-top: 0;
+    padding: 3.25rem var(--page-gutter) 3.5rem;
+  }
+
   .process-chapter--close .btn-primary {
+    width: auto;
     margin-top: 2.15rem;
   }
 
@@ -706,6 +802,7 @@
     z-index: 1;
     left: 50%;
     width: var(--cluster-w);
+    min-width: 0;
     padding-left: var(--process-rail);
     box-sizing: border-box;
     transform: translateX(-50%);
@@ -808,7 +905,7 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
   .js .process {
     height: auto;
     background: var(--bg-primary);
