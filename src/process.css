@@ -1,6 +1,12 @@
 .process {
-  --process-views: 5;
+  --process-views: 6;
   --process-nav: 5.25rem;
+  --process-beat: 450ms;
+  --process-focus: 2.25;
+  --process-row: 5.35rem;
+  --process-plum: oklch(30% 0.048 var(--hue));
+  --process-close-ink: oklch(97% 0.02 85);
+  --process-close-muted: oklch(86% 0.03 80);
   position: relative;
   z-index: 2;
   width: 100%;
@@ -12,8 +18,14 @@
   outline-offset: 3px;
 }
 
-.process-stage {
+.process-stage,
+.process-board {
   width: 100%;
+}
+
+.process-atmos,
+.process-timeline {
+  display: none;
 }
 
 .process-frame {
@@ -23,36 +35,29 @@
   padding: 5.5rem var(--page-gutter) 4.25rem;
 }
 
-.process-top {
-  max-width: 22rem;
-}
-
 .process-question {
   margin: 0;
-  font-size: clamp(1.5rem, 1.2rem + 1.6vw, 1.85rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.15;
+  max-width: 14ch;
+  font-size: clamp(2.25rem, 1.35rem + 4.4vw, 3.35rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
 }
 
 .process-amount {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.045em;
-}
-
-.process-meta {
-  margin: 0.45rem 0 0;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  color: var(--text-secondary);
+  letter-spacing: -0.05em;
 }
 
 .process-views {
   margin-top: 2.5rem;
   display: grid;
   gap: 3.25rem;
+}
+
+.process-chapter--open + .process-chapter {
+  margin-top: 0.25rem;
 }
 
 .process-id {
@@ -125,13 +130,53 @@
   color: var(--cta);
 }
 
+.process-chapter--close {
+  --text-primary: var(--process-close-ink);
+  --text-secondary: var(--process-close-muted);
+  --cta: var(--process-close-ink);
+  color: var(--process-close-ink);
+  background: var(--process-plum);
+  margin-inline: calc(var(--page-gutter) * -1);
+  padding: 2.75rem var(--page-gutter) 3rem;
+}
+
+.process-chapter--close .process-copy,
+.process-chapter--close .process-close-note {
+  color: var(--process-close-muted);
+}
+
 .process-chapter--close .process-copy {
   margin-top: 0;
+}
+
+.process-chapter--close .process-scope {
+  color: var(--process-close-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.process-chapter--close .btn-primary {
+  background: var(--process-close-ink);
+  color: var(--process-plum);
+  border-color: var(--process-close-ink);
+}
+
+.process-chapter--close .btn:focus-visible,
+.process-chapter--close .process-scope:focus-visible {
+  outline-color: var(--process-close-ink);
 }
 
 @media (hover: hover) {
   .process-scope:hover {
     color: var(--text-primary);
+  }
+
+  .process-chapter--close .btn-primary:hover {
+    background: oklch(99% 0.012 85);
+  }
+
+  .process-chapter--close .process-scope:hover {
+    color: oklch(99% 0.012 85);
   }
 }
 
@@ -141,37 +186,14 @@
     padding-bottom: 5.5rem;
   }
 
-  .process-top {
-    max-width: none;
-  }
-
   .process-question {
-    font-size: clamp(1.65rem, 1.3rem + 0.9vw, 2rem);
-    white-space: nowrap;
+    max-width: 18ch;
+    font-size: clamp(3rem, 6.2vh, 4.5rem);
   }
 
   .process-views {
     margin-top: 3.25rem;
     gap: 4.5rem;
-  }
-
-  .process-chapter {
-    display: grid;
-    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-    column-gap: clamp(2.5rem, 6vw, 7rem);
-    align-items: start;
-  }
-
-  .process-id {
-    margin: 0;
-  }
-
-  .process-num {
-    font-size: clamp(8rem, 22vh, 13.5rem);
-  }
-
-  .process-verb {
-    font-size: clamp(2.85rem, 5.2vh, 4.35rem);
   }
 
   .process-heading {
@@ -190,16 +212,123 @@
 
   .js .process {
     height: calc(var(--process-views) * 100vh);
+    background: transparent;
   }
 
   .js .process-stage {
     position: sticky;
     top: 0;
     height: 100dvh;
-    background: var(--bg-primary);
+    overflow: hidden;
+    background: oklch(98.2% 0.014 var(--hue));
+  }
+
+  .js .process-atmos {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Six purple-family atmospheres. Textures stay behind the type. */
+  .process-atmos-layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity var(--process-beat) var(--ease-out-expo);
+  }
+
+  .process-atmos-layer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .process-atmos-layer[data-atmos="0"] {
+    background: oklch(98.6% 0.012 var(--hue));
+  }
+
+  .process-atmos-layer[data-atmos="1"] {
+    background: oklch(96.8% 0.024 var(--hue));
+  }
+
+  .process-atmos-layer[data-atmos="1"]::before {
+    opacity: 0.38;
+    background-image:
+      repeating-linear-gradient(
+        to right,
+        oklch(42% 0.05 var(--hue) / 0.08) 0 1px,
+        transparent 1px 4.5rem
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        oklch(42% 0.05 var(--hue) / 0.08) 0 1px,
+        transparent 1px 4.5rem
+      );
+  }
+
+  .process-atmos-layer[data-atmos="2"] {
+    background: oklch(95.2% 0.036 312);
+  }
+
+  .process-atmos-layer[data-atmos="2"]::before {
+    background:
+      radial-gradient(
+        ellipse 46% 42% at 72% 48%,
+        oklch(99% 0.02 320 / 0.7),
+        transparent 70%
+      );
+  }
+
+  .process-atmos-layer[data-atmos="3"] {
+    background: oklch(96.4% 0.02 292);
+  }
+
+  .process-atmos-layer[data-atmos="3"]::before {
+    opacity: 0.42;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      oklch(40% 0.04 292 / 0.07) 0 1px,
+      transparent 1px 3.5rem
+    );
+  }
+
+  .process-atmos-layer[data-atmos="4"] {
+    background: oklch(93.6% 0.04 var(--hue));
+  }
+
+  .process-atmos-layer[data-atmos="4"]::before {
+    background: linear-gradient(
+      128deg,
+      oklch(99% 0.018 var(--hue) / 0.55) 8%,
+      transparent 58%
+    );
+  }
+
+  .process-atmos-layer[data-atmos="5"] {
+    background: var(--process-plum);
+  }
+
+  .process-atmos-layer[data-atmos="5"]::before {
+    background:
+      radial-gradient(ellipse 70% 55% at 18% 88%, oklch(42% 0.07 320 / 0.35), transparent 62%),
+      radial-gradient(ellipse 50% 40% at 88% 12%, oklch(38% 0.06 292 / 0.28), transparent 58%);
+  }
+
+  .process[data-step="0"] .process-atmos-layer[data-atmos="0"],
+  .process[data-step="1"] .process-atmos-layer[data-atmos="1"],
+  .process[data-step="2"] .process-atmos-layer[data-atmos="2"],
+  .process[data-step="3"] .process-atmos-layer[data-atmos="3"],
+  .process[data-step="4"] .process-atmos-layer[data-atmos="4"],
+  .process[data-step="5"] .process-atmos-layer[data-atmos="5"] {
+    opacity: 1;
   }
 
   .js .process-frame {
+    position: relative;
+    z-index: 1;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -207,15 +336,103 @@
     padding-bottom: 2.75rem;
   }
 
-  .js .process-top {
-    flex-shrink: 0;
-  }
-
-  .js .process-views {
+  .js .process-board {
     position: relative;
     flex: 1;
     min-height: 0;
-    margin-top: clamp(1.5rem, 5vh, 3.25rem);
+  }
+
+  .js .process-timeline {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    z-index: 2;
+    width: 40%;
+    margin: 0;
+    padding: 0.35rem 0 0.35rem 0;
+    list-style: none;
+    pointer-events: none;
+    border-left: 1px solid oklch(32% 0.04 var(--hue) / 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-50%);
+    transition:
+      opacity var(--process-beat) var(--ease-out-expo),
+      visibility 0s var(--process-beat);
+  }
+
+  .js .process[data-timeline] .process-timeline {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity var(--process-beat) var(--ease-out-expo),
+      visibility 0s;
+  }
+
+  .js .process-timeline li {
+    position: relative;
+    height: var(--process-row);
+    display: flex;
+    align-items: center;
+    padding-left: 1.35rem;
+  }
+
+  .js .process-timeline li::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: oklch(40% 0.04 var(--hue) / 0.28);
+    transition:
+      background-color var(--process-beat) var(--ease-out-expo),
+      transform var(--process-beat) var(--ease-out-expo);
+  }
+
+  .js .process-step-label {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.42em;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: color-mix(in oklab, var(--text-primary) 46%, oklch(96% 0.02 var(--hue)));
+    transform: scale(1);
+    transform-origin: 0 50%;
+    transition:
+      transform var(--process-beat) var(--ease-out-expo),
+      color var(--process-beat) var(--ease-out-expo);
+  }
+
+  .js .process-step-num {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.05em;
+  }
+
+  .js .process[data-timeline="0"] .process-timeline li:nth-child(1)::before,
+  .js .process[data-timeline="1"] .process-timeline li:nth-child(2)::before,
+  .js .process[data-timeline="2"] .process-timeline li:nth-child(3)::before,
+  .js .process[data-timeline="3"] .process-timeline li:nth-child(4)::before {
+    background: var(--text-primary);
+    transform: scale(1.2);
+  }
+
+  .js .process[data-timeline="0"] .process-timeline li:nth-child(1) .process-step-label,
+  .js .process[data-timeline="1"] .process-timeline li:nth-child(2) .process-step-label,
+  .js .process[data-timeline="2"] .process-timeline li:nth-child(3) .process-step-label,
+  .js .process[data-timeline="3"] .process-timeline li:nth-child(4) .process-step-label {
+    color: var(--text-primary);
+    transform: scale(var(--process-focus));
+  }
+
+  .js .process-views {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    margin: 0;
     display: block;
     overflow: hidden;
   }
@@ -226,28 +443,107 @@
     z-index: 0;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(14px);
     pointer-events: none;
     transition:
-      opacity 420ms var(--ease-out-expo),
-      transform 420ms var(--ease-out-expo),
-      visibility 0s 420ms;
+      opacity var(--process-beat) var(--ease-out-expo),
+      visibility 0s var(--process-beat);
+  }
+
+  .js .process-chapter--open {
+    transform: translateY(-1.15rem);
+    transition:
+      opacity var(--process-beat) var(--ease-out-expo),
+      transform var(--process-beat) var(--ease-out-expo),
+      visibility 0s var(--process-beat);
+  }
+
+  .js .process-chapter--close {
+    transform: translateY(1rem);
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    transition:
+      opacity var(--process-beat) var(--ease-out-expo),
+      transform var(--process-beat) var(--ease-out-expo),
+      visibility 0s var(--process-beat);
   }
 
   .js .process-chapter[data-active] {
     z-index: 1;
     opacity: 1;
     visibility: visible;
-    transform: none;
     pointer-events: auto;
     transition:
-      opacity 420ms var(--ease-out-expo),
-      transform 420ms var(--ease-out-expo),
+      opacity var(--process-beat) var(--ease-out-expo),
       visibility 0s;
+  }
+
+  .js .process-chapter--open[data-active],
+  .js .process-chapter--close[data-active] {
+    transform: none;
+    transition:
+      opacity var(--process-beat) var(--ease-out-expo),
+      transform var(--process-beat) var(--ease-out-expo),
+      visibility 0s;
+  }
+
+  .js .process-chapter--open {
+    display: flex;
+    align-items: center;
+  }
+
+  .js .process-chapter:not(.process-chapter--open):not(.process-chapter--close) .process-id {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .js .process-chapter:not(.process-chapter--open):not(.process-chapter--close) .process-body {
+    position: absolute;
+    left: 40%;
+    top: 50%;
+    width: 60%;
+    padding-left: clamp(2rem, 5vw, 5.5rem);
+    transform: translateY(calc(var(--process-row) * -2));
+  }
+
+  .js .process-chapter--close {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1.35rem;
+  }
+
+  .js .process-chapter--close .process-id {
+    margin: 0;
+  }
+
+  .js .process-num {
+    font-size: clamp(8rem, 22vh, 13.5rem);
+  }
+
+  .js .process-verb {
+    font-size: clamp(2.85rem, 5.2vh, 4.35rem);
   }
 }
 
 @media (min-width: 1024px) and (max-height: 760px) {
+  .js .process {
+    --process-focus: 1.85;
+    --process-row: 4.15rem;
+  }
+
+  .js .process-question {
+    font-size: clamp(2.35rem, 7vh, 3.25rem);
+  }
+
   .js .process-num {
     font-size: clamp(5.25rem, 20vh, 8.5rem);
   }
@@ -265,12 +561,19 @@
 @media (prefers-reduced-motion: reduce) {
   .js .process {
     height: auto;
+    background: var(--bg-primary);
   }
 
   .js .process-stage {
     position: static;
     height: auto;
+    overflow: visible;
     background: transparent;
+  }
+
+  .js .process-atmos,
+  .js .process-timeline {
+    display: none;
   }
 
   .js .process-frame {
@@ -278,6 +581,10 @@
     display: block;
     padding-top: 4.5rem;
     padding-bottom: 5.5rem;
+  }
+
+  .js .process-board {
+    position: static;
   }
 
   .js .process-views {
@@ -288,7 +595,9 @@
     overflow: visible;
   }
 
-  .js .process-chapter {
+  .js .process-chapter,
+  .js .process-chapter--open,
+  .js .process-chapter--close {
     position: static;
     opacity: 1;
     visibility: visible;
@@ -296,4 +605,57 @@
     pointer-events: auto;
     transition: none;
   }
+
+  .js .process-chapter--open {
+    display: block;
+  }
+
+  .js .process-chapter:not(.process-chapter--open):not(.process-chapter--close) .process-id {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0 0 1.15rem;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  .js .process-chapter:not(.process-chapter--open):not(.process-chapter--close) .process-body {
+    position: static;
+    left: auto;
+    top: auto;
+    width: auto;
+    padding-left: 0;
+    transform: none;
+  }
+
+  .js .process-chapter--close {
+    display: block;
+    background: var(--process-plum);
+    margin-inline: calc(var(--page-gutter) * -1);
+    padding: 2.75rem var(--page-gutter) 3rem;
+  }
+}
+
+/* Closing plum: invert the fixed nav only while that scene still covers it. */
+html:has(.process[data-close-nav]) .nav-links a,
+html:has(.process[data-close-nav]) .nav-ghost,
+html:has(.process[data-close-nav]) .nav-cta {
+  color: oklch(97% 0.02 85);
+  transition:
+    color var(--process-beat, 450ms) var(--ease-out-expo),
+    background-color var(--process-beat, 450ms) var(--ease-out-expo),
+    border-color var(--process-beat, 450ms) var(--ease-out-expo);
+}
+
+html:has(.process[data-close-nav]) .nav-cta {
+  border-color: oklch(97% 0.02 85);
+}
+
+html:has(.process[data-close-nav]) .nav-rule {
+  background: oklch(96% 0.02 85 / 0.38);
+}
+
+html:has(.process[data-close-nav]) .nav[data-scrolled] {
+  background: color-mix(in oklab, oklch(30% 0.048 304) 46%, transparent);
 }

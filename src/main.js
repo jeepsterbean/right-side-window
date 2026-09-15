@@ -157,11 +157,24 @@ function setupScrollyRoot(root) {
 
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const desktop = window.matchMedia('(min-width: 1024px)');
+  const isProcess = root.matches('.process');
   let current = -1;
+
+  /**
+   * Process scenes 1–4 share one timeline; map those indices to steps 0–3.
+   * Team uses this controller too, so the attribute stays process-only.
+   */
+  const syncProcessTimeline = (index) => {
+    if (!isProcess) return;
+    if (index >= 1 && index <= 4) root.dataset.timeline = String(index - 1);
+    else delete root.dataset.timeline;
+  };
 
   const setStacked = () => {
     current = -1;
     root.dataset.step = '0';
+    syncProcessTimeline(-1);
+    root.removeAttribute('data-close-nav');
     chapters.forEach((chapter) => {
       chapter.toggleAttribute('data-active', true);
       chapter.removeAttribute('inert');
@@ -176,6 +189,7 @@ function setupScrollyRoot(root) {
     if (current === index) return;
     current = index;
     root.dataset.step = String(index);
+    syncProcessTimeline(index);
     chapters.forEach((chapter, i) => {
       const on = i === index;
       chapter.toggleAttribute('data-active', on);
@@ -196,7 +210,12 @@ function setupScrollyRoot(root) {
     const rect = root.getBoundingClientRect();
     const travel = Math.max(1, rect.height - window.innerHeight);
     const progress = Math.min(1, Math.max(0, -rect.top / travel));
-    setStep(Math.min(count - 1, Math.floor(progress * count)));
+    const index = Math.min(count - 1, Math.floor(progress * count));
+    setStep(index);
+    if (isProcess) {
+      const covering = rect.top <= 0 && rect.bottom > 96;
+      root.toggleAttribute('data-close-nav', covering && index === 5);
+    }
   };
 
   let ticking = false;
