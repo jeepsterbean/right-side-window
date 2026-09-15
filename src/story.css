@@ -55,6 +55,7 @@
   font-weight: 600;
   letter-spacing: -0.045em;
   line-height: 1.05;
+  overflow-wrap: anywhere;
 }
 
 .case-lede > p {
@@ -265,8 +266,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border: 1px solid var(--border);
   border-radius: 999px;
   color: var(--text-primary);
@@ -341,6 +342,7 @@
   font-weight: 500;
   line-height: 1.4;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .work-row figcaption span {
@@ -527,6 +529,7 @@
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .faq-list summary::-webkit-details-marker {
@@ -641,7 +644,7 @@
 }
 
 .site-foot {
-  padding: 0 0 3rem;
+  padding: 0 0 max(3rem, calc(2rem + env(safe-area-inset-bottom, 0px)));
   color: var(--text-secondary);
 }
 

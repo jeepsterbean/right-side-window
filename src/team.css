@@ -35,6 +35,8 @@
   font-weight: 600;
   letter-spacing: -0.045em;
   line-height: 0.96;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .team-title-rest {
@@ -47,6 +49,7 @@
   font-weight: 500;
   line-height: 1.45;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .team-photo {
@@ -173,7 +176,6 @@
   .team-title {
     font-size: clamp(2.35rem, 4.2vw, 3.25rem);
     line-height: 1.02;
-    white-space: nowrap;
   }
 
   .team-title-rest {
@@ -182,7 +184,6 @@
 
   .team-lede {
     margin-top: 0.7rem;
-    white-space: nowrap;
   }
 
   .team-photo {

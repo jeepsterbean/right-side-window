@@ -21,6 +21,12 @@
     <meta property="og:image:width" content="640" />
     <meta property="og:image:height" content="472" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Singapore’s Leading Team for Social Media Growth & Cinematic Video Production" />
+    <meta
+      name="twitter:description"
+      content="Strategy, video, design, email, and paid ads for Singapore businesses — $1,000/month, month to month."
+    />
+    <meta name="twitter:image" content="/logo.png" />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
@@ -83,9 +89,12 @@
               aria-controls="mobile-menu"
               data-nav-toggle
             >
-              <span class="sr-only">Open menu</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <span class="sr-only" data-nav-label>Open menu</span>
+              <svg class="nav-icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+              </svg>
+              <svg class="nav-icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" hidden>
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
               </svg>
             </button>
           </div>
@@ -113,21 +122,24 @@
             <div class="hero-copy">
               <h1 class="hero-title" data-hero-title>
                 <span class="hero-line">
-                  <span class="word">Singapore’s</span>
-                  <span class="word">Leading</span>
-                  <span class="word">Team</span>
-                  <span class="word">for</span>
+                  <span class="word" style="--i: 0">Singapore’s</span>
+                  <span class="word" style="--i: 1">Leading</span>
+                  <span class="hero-break" aria-hidden="true"></span>
+                  <span class="word" style="--i: 2">Team</span>
+                  <span class="word" style="--i: 3">for</span>
                 </span>
                 <span class="hero-line">
-                  <span class="word">Social</span>
-                  <span class="word">Media</span>
-                  <span class="word">Growth</span>
-                  <span class="word">&amp;</span>
+                  <span class="word" style="--i: 4">Social</span>
+                  <span class="word" style="--i: 5">Media</span>
+                  <span class="hero-break" aria-hidden="true"></span>
+                  <span class="word" style="--i: 6">Growth</span>
+                  <span class="word" style="--i: 7">&amp;</span>
                 </span>
                 <span class="hero-line">
-                  <span class="word">Cinematic</span>
-                  <span class="word">Video</span>
-                  <span class="word">Production</span>
+                  <span class="word" style="--i: 8">Cinematic</span>
+                  <span class="word" style="--i: 9">Video</span>
+                  <span class="hero-break" aria-hidden="true"></span>
+                  <span class="word" style="--i: 10">Production</span>
                 </span>
               </h1>
               <p class="hero-sub" data-hero-sub>
@@ -150,6 +162,15 @@
             <div class="logo-field" aria-labelledby="logo-kicker">
               <p class="logo-kicker" id="logo-kicker">Trusted by brands across Singapore and beyond</p>
               <div class="logo-rows" data-logo-rows></div>
+              <noscript>
+                <div class="logo-row logo-row--static">
+                  <div class="logo-slot"><img class="logo-mark" src="/logos/asics.png" alt="ASICS" width="120" height="36" /></div>
+                  <div class="logo-slot"><img class="logo-mark" src="/logos/puma.png" alt="Puma" width="120" height="36" /></div>
+                  <div class="logo-slot"><img class="logo-mark" src="/logos/nus.png" alt="NUS" width="120" height="36" /></div>
+                  <div class="logo-slot"><img class="logo-mark" src="/logos/straits-podiatry.png" alt="Straits Podiatry" width="120" height="36" /></div>
+                  <div class="logo-slot"><img class="logo-mark" src="/logos/british-hainan.png" alt="British Hainan" width="120" height="36" /></div>
+                </div>
+              </noscript>
             </div>
           </div>
         </section>
@@ -373,7 +394,7 @@
                 <div class="case-board">
                   <div class="case-proof">
                     <figure>
-                      <a href="/work/straits-month-1.jpg" target="_blank" rel="noopener noreferrer">
+                      <a href="/work/straits-month-1.jpg" target="_blank" rel="noopener noreferrer" aria-label="Month 1 TikTok screenshot (opens in a new tab)">
                         <img
                           src="/work/straits-month-1.jpg"
                           alt="TikTok profile @podiatristelliott after the first month: 10 followers, 154 likes"
@@ -385,7 +406,7 @@
                       <figcaption>Month 1</figcaption>
                     </figure>
                     <figure>
-                      <a href="/work/straits-month-12.jpg" target="_blank" rel="noopener noreferrer">
+                      <a href="/work/straits-month-12.jpg" target="_blank" rel="noopener noreferrer" aria-label="Month 12 TikTok screenshot (opens in a new tab)">
                         <img
                           src="/work/straits-month-12.jpg"
                           alt="TikTok profile @podiatristelliott after twelve months: 7,125 followers, 95.9K likes"
@@ -760,9 +781,11 @@
               <a
                 class="btn btn-primary book-cta"
                 href="https://wa.link/wuxls6"
+                target="_blank"
                 rel="noopener noreferrer"
               >
                 <span>Chat on WhatsApp</span>
+                <span class="sr-only">(opens in a new tab)</span>
                 <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path class="arrow-head" d="M9 6l7 6-7 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                   <path class="arrow-shaft" d="M16 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -781,7 +804,7 @@
           <p>The Right Side People Pte. Ltd.</p>
           <p>601 MacPherson Road, Grantral Mall #03-12, Singapore 368242</p>
           <p>
-            <a href="https://wa.link/wuxls6" rel="noopener noreferrer">WhatsApp +65 8779 9950</a>
+            <a href="https://wa.link/wuxls6" target="_blank" rel="noopener noreferrer">WhatsApp +65 8779 9950<span class="sr-only"> (opens in a new tab)</span></a>
           </p>
         </div>
       </footer>

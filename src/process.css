@@ -54,6 +54,7 @@
   letter-spacing: -0.05em;
   line-height: 1.02;
   text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .process-word {
@@ -100,6 +101,7 @@
   font-weight: 700;
   letter-spacing: -0.05em;
   line-height: 1.08;
+  overflow-wrap: anywhere;
 }
 
 .process-copy {
@@ -109,6 +111,7 @@
   font-weight: 400;
   line-height: 1.55;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .process-close-title {

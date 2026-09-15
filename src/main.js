@@ -45,7 +45,7 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 function slot(client, decorative = false) {
   const alt = decorative ? '' : client.name;
   const hidden = decorative ? ' aria-hidden="true"' : '';
-  return `<div class="logo-slot"${hidden}><img class="logo-mark" src="${client.src}" alt="${alt}" decoding="async" /></div>`;
+  return `<div class="logo-slot"${hidden}><img class="logo-mark" src="${client.src}" alt="${alt}" width="120" height="36" decoding="async" /></div>`;
 }
 
 /**
@@ -77,36 +77,40 @@ function renderLogos() {
   }
 
   rowsRoot.innerHTML = rows.join('');
+  rowsRoot.querySelectorAll('.logo-mark').forEach((img) => {
+    img.addEventListener('error', () => {
+      const cell = img.closest('.logo-slot');
+      if (cell) cell.hidden = true;
+    });
+  });
 }
 
-const HOVER_PLAYBACK_RATE = 0.32;
-
 /**
- * Slow only the row under the pointer. playbackRate keeps the current
- * offset, so the track decelerates in place instead of jumping or pausing.
+ * Pause the row under the pointer or keyboard focus so the marquee
+ * meets WCAG 2.2.2 (moving content that lasts more than five seconds).
  */
-function setRowSpeed(row, rate) {
+function setRowPaused(row, paused) {
   row.querySelector('.logo-track')?.getAnimations().forEach((anim) => {
-    anim.playbackRate = rate;
+    anim.playbackRate = paused ? 0 : 1;
   });
 }
 
 function setupLogoHover() {
   const rowsRoot = document.querySelector('[data-logo-rows]');
-  if (!rowsRoot || !window.matchMedia('(hover: hover)').matches) return;
+  if (!rowsRoot) return;
 
   rowsRoot.addEventListener('pointerover', (event) => {
     const row = event.target instanceof Element ? event.target.closest('.logo-row[data-dir]') : null;
     const from = event.relatedTarget instanceof Element ? event.relatedTarget.closest('.logo-row[data-dir]') : null;
     if (!row || row === from) return;
-    setRowSpeed(row, HOVER_PLAYBACK_RATE);
+    setRowPaused(row, true);
   });
 
   rowsRoot.addEventListener('pointerout', (event) => {
     const row = event.target instanceof Element ? event.target.closest('.logo-row[data-dir]') : null;
     const to = event.relatedTarget instanceof Element ? event.relatedTarget.closest('.logo-row[data-dir]') : null;
     if (!row || row === to) return;
-    setRowSpeed(row, 1);
+    setRowPaused(row, false);
   });
 }
 
@@ -114,6 +118,12 @@ function setupNav() {
   const nav = document.querySelector('[data-nav]');
   const toggle = document.querySelector('[data-nav-toggle]');
   const menu = document.querySelector('[data-mobile-menu]');
+  const label = document.querySelector('[data-nav-label]');
+  const iconOpen = toggle?.querySelector('.nav-icon-open');
+  const iconClose = toggle?.querySelector('.nav-icon-close');
+  const main = document.getElementById('main');
+  const footer = document.querySelector('.site-foot');
+  const skip = document.querySelector('.skip-link');
   if (!nav) return;
 
   const syncScroll = () => {
@@ -125,22 +135,42 @@ function setupNav() {
 
   if (!toggle || !menu) return;
 
-  const close = () => {
-    menu.hidden = true;
-    toggle.setAttribute('aria-expanded', 'false');
-    nav.removeAttribute('data-menu-open');
-    document.body.style.overflow = '';
-  };
+  /**
+   * Open or close the drawer. Restore focus only after Escape so a
+   * resize-to-desktop close doesn't yank keyboard users around.
+   */
+  const setOpen = (open, { restoreFocus = false } = {}) => {
+    if (menu.hidden === !open) {
+      if (!open && restoreFocus) toggle.focus();
+      return;
+    }
 
-  toggle.addEventListener('click', () => {
-    const open = menu.hidden;
     menu.hidden = !open;
     toggle.setAttribute('aria-expanded', String(open));
     nav.toggleAttribute('data-menu-open', open);
-    document.body.style.overflow = open ? 'hidden' : '';
+    document.documentElement.classList.toggle('nav-locked', open);
+    if (label) label.textContent = open ? 'Close menu' : 'Open menu';
+    if (iconOpen) iconOpen.hidden = open;
+    if (iconClose) iconClose.hidden = !open;
+    main?.toggleAttribute('inert', open);
+    footer?.toggleAttribute('inert', open);
+    skip?.toggleAttribute('inert', open);
+    if (!open && restoreFocus) toggle.focus();
+  };
+
+  const close = (options) => setOpen(false, options);
+
+  toggle.addEventListener('click', () => setOpen(menu.hidden));
+
+  menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => close()));
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !menu.hidden) {
+      event.preventDefault();
+      close({ restoreFocus: true });
+    }
   });
 
-  menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', close));
   window.addEventListener('resize', () => {
     if (window.matchMedia('(min-width: 1024px)').matches) close();
   });
@@ -376,12 +406,20 @@ function setupScrolly() {
 
 /**
  * Play entrance motion once a block reaches the viewport.
+ * Fail open: missing IntersectionObserver or a stalled observer must
+ * never leave retainer / FAQ / book invisible.
  */
 function setupReveal() {
   const nodes = [...document.querySelectorAll('[data-reveal]')];
   if (!nodes.length) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    nodes.forEach((node) => node.classList.add('is-in'));
+
+  const show = (node) => node.classList.add('is-in');
+
+  if (
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    typeof IntersectionObserver !== 'function'
+  ) {
+    nodes.forEach(show);
     return;
   }
 
@@ -389,7 +427,7 @@ function setupReveal() {
     (entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-in');
+        show(entry.target);
         io.unobserve(entry.target);
       });
     },
@@ -398,9 +436,11 @@ function setupReveal() {
 
   nodes.forEach((node) => {
     const box = node.getBoundingClientRect();
-    if (box.top < window.innerHeight * 0.92 && box.bottom > 80) node.classList.add('is-in');
+    if (box.top < window.innerHeight * 0.92 && box.bottom > 80) show(node);
     else io.observe(node);
   });
+
+  window.setTimeout(() => nodes.forEach(show), 2500);
 }
 
 /**
@@ -422,9 +462,11 @@ function setupWorkCarousel() {
   let loopWidth = 0;
   let settling = false;
   let dragging = false;
+  let paused = false;
   let inView = false;
   let lastTs = 0;
   let settleTimer = 0;
+  let raf = 0;
   const SPEED = 36;
 
   /**
@@ -486,6 +528,7 @@ function setupWorkCarousel() {
 
   const canCrawl = () =>
     inView &&
+    !paused &&
     (!section.hasAttribute('data-title') || section.dataset.title === 'pin') &&
     !dragging &&
     !settling &&
@@ -500,8 +543,36 @@ function setupWorkCarousel() {
       track.scrollLeft += SPEED * dt;
       wrap();
     }
-    requestAnimationFrame(tick);
+    raf = requestAnimationFrame(tick);
   };
+
+  const startTick = () => {
+    if (raf || reducedMotion.matches) return;
+    lastTs = 0;
+    raf = requestAnimationFrame(tick);
+  };
+
+  const stopTick = () => {
+    if (!raf) return;
+    cancelAnimationFrame(raf);
+    raf = 0;
+  };
+
+  const syncTick = () => {
+    if (inView && document.visibilityState === 'visible' && !reducedMotion.matches) startTick();
+    else stopTick();
+  };
+
+  const scene = root.closest('.work-more-scene') || root;
+  const setPaused = (value) => {
+    paused = value;
+  };
+  scene.addEventListener('pointerenter', () => setPaused(true));
+  scene.addEventListener('pointerleave', () => setPaused(false));
+  scene.addEventListener('focusin', () => setPaused(true));
+  scene.addEventListener('focusout', (event) => {
+    if (!scene.contains(event.relatedTarget)) setPaused(false);
+  });
 
   prev.addEventListener('click', () => go(-1));
   next.addEventListener('click', () => go(1));
@@ -536,6 +607,7 @@ function setupWorkCarousel() {
   const io = new IntersectionObserver(
     (entries) => {
       inView = entries.some((entry) => entry.isIntersecting);
+      syncTick();
     },
     { threshold: 0.18 },
   );
@@ -543,14 +615,16 @@ function setupWorkCarousel() {
 
   document.addEventListener('visibilitychange', () => {
     lastTs = 0;
+    syncTick();
   });
+  reducedMotion.addEventListener('change', syncTick);
 
   track.querySelectorAll('img').forEach((img) => {
     if (!img.complete) img.addEventListener('load', measure, { once: true });
   });
 
   measure();
-  requestAnimationFrame(tick);
+  syncTick();
 }
 
 renderLogos();
