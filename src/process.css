@@ -14,6 +14,7 @@
   --process-plum: oklch(30% 0.048 var(--hue));
   --process-close-ink: oklch(97% 0.02 85);
   --process-close-muted: oklch(86% 0.03 80);
+  --process-close-em: oklch(78% 0.14 322);
   position: relative;
   z-index: 2;
   width: 100%;
@@ -114,33 +115,88 @@
   overflow-wrap: anywhere;
 }
 
+/* Close beat: centered conversion landing, not a leftover chapter. */
+.process-close-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 42rem;
+  margin-inline: auto;
+}
+
 .process-close-title {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 0.22em;
+  row-gap: 0.06em;
   margin: 0;
-  max-width: 11ch;
-  font-size: clamp(2.25rem, 1.5rem + 3.2vw, 3.25rem);
+  max-width: 32ch;
+  font-size: clamp(2.15rem, 1.35rem + 3.4vw, 3.25rem);
   font-weight: 700;
   letter-spacing: -0.05em;
-  line-height: 0.96;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.process-close-em {
+  color: var(--process-close-em);
+}
+
+.process-close-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .process-close-price {
-  margin: 1.15rem 0 1.2rem;
+  margin: 1.15rem 0 0;
+  max-width: 36rem;
   font-size: 0.8125rem;
   font-weight: 520;
   letter-spacing: 0.12em;
+  line-height: 1.55;
   text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.process-close-break {
+  white-space: nowrap;
+}
+
+@media (max-width: 540px) {
+  .process-close-break {
+    display: block;
+    width: 100%;
+    height: 0.2em;
+    overflow: hidden;
+    font-size: 0;
+  }
+}
+
+.process-close-foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1.65rem;
 }
 
 .process-close-note {
-  margin: 1.1rem 0 0;
+  margin: 0;
+  max-width: 36ch;
   font-size: 0.875rem;
   font-weight: 400;
+  line-height: 1.45;
   color: var(--text-secondary);
 }
 
 .process-scope {
   display: inline-block;
-  margin-top: 0.45rem;
+  margin: 0;
   font-size: var(--process-label);
   font-weight: 520;
   letter-spacing: var(--process-label-track);
@@ -155,25 +211,21 @@
   color: var(--process-close-ink);
   background: var(--process-plum);
   margin-inline: calc(var(--page-gutter) * -1);
-  padding: 2.75rem var(--page-gutter) 3rem;
+  padding: 3.25rem var(--page-gutter) 3.5rem;
 }
 
-.process-chapter--close .process-copy,
 .process-chapter--close .process-close-note {
   color: var(--process-close-muted);
 }
 
-.process-chapter--close .process-copy {
-  margin-top: 0;
-}
-
 .process-chapter--close .process-scope {
-  color: var(--process-close-ink);
+  color: color-mix(in oklab, var(--process-close-muted) 82%, transparent);
   text-decoration: underline;
-  text-underline-offset: 0.2em;
+  text-underline-offset: 0.22em;
 }
 
 .process-chapter--close .btn-primary {
+  margin-top: 1.85rem;
   background: var(--process-close-ink);
   color: var(--process-plum);
   border-color: var(--process-close-ink);
@@ -194,7 +246,7 @@
   }
 
   .process-chapter--close .process-scope:hover {
-    color: oklch(99% 0.012 85);
+    color: var(--process-close-ink);
   }
 }
 
@@ -224,7 +276,21 @@
   }
 
   .process-close-title {
-    font-size: clamp(3rem, 6.4vh, 4.75rem);
+    font-size: clamp(2.85rem, 5.8vh, 4.25rem);
+    max-width: 34ch;
+  }
+
+  .process-close-price {
+    margin-top: 1.35rem;
+  }
+
+  .process-chapter--close .btn-primary {
+    margin-top: 2.15rem;
+  }
+
+  .process-close-foot {
+    margin-top: 1.85rem;
+    gap: 0.4rem;
   }
 
   .js .process {
@@ -554,13 +620,11 @@
   }
 
   .js .process-chapter--close {
-    transform: translateY(1rem);
     background: transparent;
     margin: 0;
-    padding: 0;
+    padding: 0 var(--page-gutter);
     transition:
       opacity var(--process-beat) var(--ease-out-expo),
-      transform var(--process-beat) var(--ease-out-expo),
       visibility 0s var(--process-beat);
   }
 
@@ -575,11 +639,37 @@
   }
 
   .js .process-chapter--close[data-active] {
-    transform: none;
     transition:
       opacity var(--process-beat) var(--ease-out-expo),
-      transform var(--process-beat) var(--ease-out-expo),
       visibility 0s;
+  }
+
+  /* Close title reuses the opening word-reveal; rest of the stack waits. */
+  .js .process-close-title .process-word {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(0.55em);
+  }
+
+  .js .process-chapter--close[data-active] .process-close-title .process-word {
+    animation: word-in 680ms var(--ease-out-expo) both;
+    animation-delay: calc(var(--i, 0) * 55ms);
+  }
+
+  /* Answers the opening $1,000: same late arrival, lifted ink for plum. */
+  .js .process-chapter--close[data-active] .process-close-title .process-close-em {
+    animation-duration: 820ms;
+    animation-delay: 520ms;
+  }
+
+  .js .process-close-meta {
+    opacity: 0;
+    transform: translateY(0.65rem);
+  }
+
+  .js .process-chapter--close[data-active] .process-close-meta {
+    animation: rise 720ms var(--ease-out-expo) both;
+    animation-delay: 680ms;
   }
 
   /* Ghost numeral sits just right of the centred spine. */
@@ -652,12 +742,15 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
-    gap: 1.35rem;
+    align-items: center;
   }
 
-  .js .process-chapter--close .process-id {
-    margin: 0;
+  .js .process-chapter--close .process-close-stack {
+    max-width: min(42rem, 100%);
+  }
+
+  .js .process-chapter--close .process-close-title {
+    max-width: 30ch;
   }
 
   .js .process-num {
@@ -694,9 +787,24 @@
     font-size: clamp(2.1rem, 5.4vh, 3rem);
   }
 
-  .js .process-heading,
-  .js .process-close-title {
+  .js .process-heading {
     font-size: clamp(1.85rem, 5vh, 2.6rem);
+  }
+
+  .js .process-close-title {
+    font-size: clamp(2.15rem, 5.6vh, 3.1rem);
+  }
+
+  .js .process-close-price {
+    margin-top: 1rem;
+  }
+
+  .js .process-chapter--close .btn-primary {
+    margin-top: 1.5rem;
+  }
+
+  .js .process-close-foot {
+    margin-top: 1.25rem;
   }
 }
 
@@ -762,6 +870,14 @@
     animation: none;
   }
 
+  .js .process-close-title .process-word,
+  .js .process-close-meta {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    animation: none;
+  }
+
   .js .process-chapter:not(.process-chapter--close) .process-id {
     position: static;
     margin: 0 0 1.15rem;
@@ -797,7 +913,11 @@
     display: block;
     background: var(--process-plum);
     margin-inline: calc(var(--page-gutter) * -1);
-    padding: 2.75rem var(--page-gutter) 3rem;
+    padding: 3.25rem var(--page-gutter) 3.5rem;
+  }
+
+  .js .process-chapter--close .process-close-stack {
+    max-width: 42rem;
   }
 }
 
