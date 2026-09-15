@@ -42,6 +42,7 @@
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .case-lede {
@@ -64,6 +65,7 @@
   font-weight: 500;
   line-height: 1.55;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .case-board {
@@ -176,6 +178,7 @@
   letter-spacing: -0.02em;
   line-height: 1.5;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .case-quote footer {
@@ -234,6 +237,7 @@
   letter-spacing: -0.05em;
   line-height: 1.02;
   text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .work-more-word {
@@ -362,6 +366,7 @@
   font-weight: 600;
   letter-spacing: -0.04em;
   line-height: 1.06;
+  overflow-wrap: anywhere;
 }
 
 .retainer h2 span {
@@ -414,6 +419,7 @@
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .retainer-card {
@@ -449,6 +455,7 @@
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .retainer-after {
@@ -474,12 +481,13 @@
 
 .retainer-after li {
   display: grid;
-  grid-template-columns: 1.75rem 1fr;
+  grid-template-columns: 1.75rem minmax(0, 1fr);
   gap: 0.65rem;
   font-size: 1rem;
   font-weight: 500;
   line-height: 1.5;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .retainer-after span {
@@ -506,6 +514,7 @@
   font-weight: 600;
   letter-spacing: -0.035em;
   line-height: 1.12;
+  overflow-wrap: anywhere;
 }
 
 .faq-list {
@@ -565,6 +574,12 @@
   font-weight: 500;
   line-height: 1.65;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.faq-list a {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .book {
@@ -599,6 +614,7 @@
 .book-copy {
   position: relative;
   z-index: 1;
+  min-width: 0;
 }
 
 .book-panel h2 {
@@ -609,6 +625,7 @@
   letter-spacing: -0.045em;
   line-height: 0.96;
   color: var(--cta-ink);
+  overflow-wrap: anywhere;
 }
 
 .book-panel p {
@@ -618,6 +635,7 @@
   font-weight: 500;
   line-height: 1.6;
   color: oklch(88% 0.05 280);
+  overflow-wrap: anywhere;
 }
 
 .book-mark {
@@ -651,8 +669,14 @@
 .site-foot-inner {
   display: grid;
   gap: 0.3rem;
+  min-width: 0;
   font-size: 0.875rem;
   font-weight: 500;
+}
+
+.site-foot p {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .site-foot a:focus-visible {
@@ -705,7 +729,7 @@
   }
 
   .retainer-after ol {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.5rem;
   }
 
@@ -715,7 +739,7 @@
   }
 
   .site-foot-inner {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: minmax(0, auto) minmax(0, 1fr) minmax(0, auto);
     align-items: baseline;
     gap: 1rem 2rem;
   }
@@ -806,10 +830,12 @@
 
   .js .case[data-step="0"] .case-char {
     opacity: 0;
+    animation: case-char-failopen 0s 2.8s forwards;
   }
 
   .js .case[data-step="0"] .case-char.is-on {
     opacity: 1;
+    animation: none;
   }
 
   .js .case[data-step="0"] .case-lede > p {
@@ -1457,6 +1483,12 @@
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes case-char-failopen {
+  to {
+    opacity: 1;
   }
 }
 

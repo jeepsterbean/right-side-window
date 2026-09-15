@@ -63,6 +63,7 @@
   line-height: 1.08;
   text-align: center;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .process-break {
@@ -93,7 +94,7 @@
 .process-chapter:not(.process-chapter--close) {
   position: relative;
   padding: 0 0 var(--space-chapter) 1.35rem;
-  border-left: 1px solid oklch(32% 0.04 var(--hue) / 0.2);
+  border-inline-start: 1px solid oklch(32% 0.04 var(--hue) / 0.2);
 }
 
 .process-chapter[data-chapter="3"] {
@@ -103,7 +104,7 @@
 .process-chapter:not(.process-chapter--close)::before {
   content: "";
   position: absolute;
-  left: -3.5px;
+  inset-inline-start: -3.5px;
   top: 0.45em;
   width: 7px;
   height: 7px;
@@ -148,6 +149,7 @@
   letter-spacing: -0.04em;
   line-height: 1.15;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .process-copy {
@@ -157,6 +159,7 @@
   font-weight: 400;
   line-height: 1.5;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 /* Close beat: centered conversion landing, not a leftover chapter. */
@@ -183,6 +186,7 @@
   letter-spacing: -0.05em;
   line-height: 1.02;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .process-close-em {
@@ -205,6 +209,7 @@
   line-height: 1.55;
   text-transform: uppercase;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .process-close-break {
@@ -236,6 +241,7 @@
   font-weight: 400;
   line-height: 1.45;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .process-scope {
@@ -318,7 +324,7 @@
 
   .process-chapter:not(.process-chapter--close) {
     padding: 0;
-    border-left: 0;
+    border-inline-start: 0;
   }
 
   .process-chapter:not(.process-chapter--close)::before {
@@ -796,6 +802,7 @@
     z-index: 1;
     left: 50%;
     width: var(--cluster-w);
+    min-width: 0;
     padding-left: var(--process-rail);
     box-sizing: border-box;
     transform: translateX(-50%);

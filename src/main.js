@@ -42,10 +42,17 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 /**
  * Render one logo cell. Duplicate passes are decorative so screen readers skip them.
  */
+function escapeAttr(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;');
+}
+
 function slot(client, decorative = false) {
-  const alt = decorative ? '' : client.name;
+  const alt = decorative ? '' : escapeAttr(client.name);
   const hidden = decorative ? ' aria-hidden="true"' : '';
-  return `<div class="logo-slot"${hidden}><img class="logo-mark" src="${client.src}" alt="${alt}" width="120" height="36" decoding="async" /></div>`;
+  return `<div class="logo-slot"${hidden}><img class="logo-mark" src="${escapeAttr(client.src)}" alt="${alt}" width="120" height="36" decoding="async" /></div>`;
 }
 
 /**
@@ -54,7 +61,7 @@ function slot(client, decorative = false) {
  */
 function renderLogos() {
   const rowsRoot = document.querySelector('[data-logo-rows]');
-  if (!rowsRoot) return;
+  if (!rowsRoot || !CLIENTS.length) return;
 
   const staticRows = reducedMotion.matches;
   const rows = [];
@@ -77,12 +84,6 @@ function renderLogos() {
   }
 
   rowsRoot.innerHTML = rows.join('');
-  rowsRoot.querySelectorAll('.logo-mark').forEach((img) => {
-    img.addEventListener('error', () => {
-      const cell = img.closest('.logo-slot');
-      if (cell) cell.hidden = true;
-    });
-  });
 }
 
 /**
@@ -160,14 +161,42 @@ function setupNav() {
 
   const close = (options) => setOpen(false, options);
 
+  /**
+   * Keep Tab inside the open drawer. Brand + toggle stay available;
+   * main is inert so this is the remaining tab loop.
+   */
+  const getMenuFocusable = () =>
+    [nav.querySelector('.brand'), toggle, ...menu.querySelectorAll('a')].filter(
+      (el) => el instanceof HTMLElement && !el.closest('[hidden]'),
+    );
+
   toggle.addEventListener('click', () => setOpen(menu.hidden));
 
   menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => close()));
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !menu.hidden) {
+    if (menu.hidden) return;
+
+    if (event.key === 'Escape') {
       event.preventDefault();
       close({ restoreFocus: true });
+      return;
+    }
+
+    if (event.key !== 'Tab') return;
+
+    const focusable = getMenuFocusable();
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement;
+
+    if (event.shiftKey && (active === first || !nav.contains(active) && !menu.contains(active))) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && (active === last || !nav.contains(active) && !menu.contains(active))) {
+      event.preventDefault();
+      first.focus();
     }
   });
 
@@ -436,6 +465,17 @@ function setupScrollyRoot(root) {
     }
   };
 
+  window.setTimeout(() => {
+    caseChars.forEach((el) => el.classList.add('is-on'));
+    if (!leadsWithTitle || root.hasAttribute('data-title-enter')) return;
+    const el = title || caseHeading;
+    if (!el) return;
+    const box = el.getBoundingClientRect();
+    if (box.top < window.innerHeight * 0.88 && box.bottom > 64) {
+      root.dataset.titleEnter = '';
+    }
+  }, 2800);
+
   return update;
 }
 
@@ -549,6 +589,7 @@ function initWorkCarousel(root, section) {
   if (!track || !prev || !next) return;
 
   const originals = [...track.children];
+  if (!originals.length) return;
   let loopWidth = 0;
   let settling = false;
   let dragging = false;
@@ -627,9 +668,13 @@ function initWorkCarousel(root, section) {
 
   const tick = (now) => {
     if (loopWidth <= 0) measure();
+    if (loopWidth <= 0) {
+      raf = 0;
+      return;
+    }
     const dt = Math.min(0.048, (now - lastTs) / 1000 || 0);
     lastTs = now;
-    if (canCrawl() && loopWidth > 0) {
+    if (canCrawl()) {
       track.scrollLeft += SPEED * dt;
       wrap();
     }
@@ -637,7 +682,7 @@ function initWorkCarousel(root, section) {
   };
 
   const startTick = () => {
-    if (raf || reducedMotion.matches) return;
+    if (raf || reducedMotion.matches || loopWidth <= 0) return;
     lastTs = 0;
     raf = requestAnimationFrame(tick);
   };
@@ -682,7 +727,10 @@ function initWorkCarousel(root, section) {
   window.addEventListener('pointercancel', () => {
     dragging = false;
   });
-  window.addEventListener('resize', measure);
+  window.addEventListener('resize', () => {
+    measure();
+    syncTick();
+  });
 
   root.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowLeft') {
@@ -709,18 +757,64 @@ function initWorkCarousel(root, section) {
   });
   reducedMotion.addEventListener('change', syncTick);
 
+  const onImageSettled = () => {
+    measure();
+    syncTick();
+  };
+
   track.querySelectorAll('img').forEach((img) => {
-    if (!img.complete) img.addEventListener('load', measure, { once: true });
+    if (img.complete) return;
+    img.addEventListener('load', onImageSettled, { once: true });
+    img.addEventListener('error', onImageSettled, { once: true });
   });
 
   measure();
   syncTick();
 }
 
-renderLogos();
-reducedMotion.addEventListener('change', renderLogos);
-setupLogoHover();
-setupNav();
-setupScrolly();
-setupReveal();
-setupWorkCarousel();
+/**
+ * Hide broken images so the browser's alt icon doesn't punch holes
+ * in the layout. Logo cells drop out of the marquee entirely.
+ */
+function setupBrokenMedia() {
+  const fail = (img) => {
+    if (!(img instanceof HTMLImageElement) || img.classList.contains('is-broken')) return;
+    img.classList.add('is-broken');
+    img.closest('.logo-slot')?.setAttribute('hidden', '');
+  };
+
+  document.addEventListener(
+    'error',
+    (event) => {
+      if (event.target instanceof HTMLImageElement) fail(event.target);
+    },
+    true,
+  );
+
+  document.querySelectorAll('img').forEach((img) => {
+    if (img.complete && img.naturalWidth === 0 && (img.currentSrc || img.getAttribute('src'))) {
+      fail(img);
+    }
+  });
+}
+
+/**
+ * Isolate boot so a throw in logos or scrolly cannot skip nav, reveal,
+ * or leave [data-reveal] blocks invisible.
+ */
+function boot(fn) {
+  try {
+    fn();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+boot(renderLogos);
+boot(() => reducedMotion.addEventListener('change', renderLogos));
+boot(setupLogoHover);
+boot(setupBrokenMedia);
+boot(setupNav);
+boot(setupScrolly);
+boot(setupReveal);
+boot(setupWorkCarousel);
