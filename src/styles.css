@@ -548,8 +548,12 @@ button {
 }
 
 .hero-line {
-  display: block;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  column-gap: 0.22em;
   width: 100%;
+  min-width: 0;
 }
 
 @media (min-width: 768px) {
@@ -562,19 +566,18 @@ button {
   .hero-title {
     font-size: clamp(2.45rem, 3.5vw, 3.25rem);
   }
+
+  .hero-line {
+    justify-content: center;
+  }
 }
 
 .word {
   display: inline-block;
-  margin-right: 0.22em;
   opacity: 0;
   filter: blur(10px);
   transform: translateY(30px);
   animation: word-in 720ms var(--ease-out-expo) forwards;
-}
-
-.hero-line .word:last-child {
-  margin-right: 0;
 }
 
 .hero-line:nth-child(1) .word:nth-child(1) { animation-delay: 80ms; }

@@ -5,7 +5,6 @@ import './story.css';
 
 document.documentElement.classList.add('js');
 
-/** Client marks for the nowadays-style logo field. */
 const CLIENTS = [
   { src: '/logos/asics.png', name: 'ASICS' },
   { src: '/logos/puma.png', name: 'Puma' },
@@ -151,27 +150,55 @@ function setupNav() {
  * Drive a sticky scrolly stage: one viewport, views swap with scroll progress.
  * Process adds an opening beat before the chapters so the $1,000 question
  * can sit as its own chapter, then pin to the top for the four steps.
+ * Work-more does the same with "More happy customers", then holds the strip.
+ * Team uses data-views with no chapters: three focused timeline beats, then close.
+ * Straits uses data-views="4" over three chapters so the intro owns view 0.
  */
 function setupScrollyRoot(root) {
   const chapters = [...root.querySelectorAll('[data-chapter]')];
-  const count = chapters.length;
-  if (!count) return;
-
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const desktop = window.matchMedia('(min-width: 1024px)');
   const isProcess = root.matches('.process');
-  const views = isProcess ? count + 1 : count;
-  const title = root.querySelector('.process-question, .team-title');
-  const board = root.querySelector('.process-board');
+  const isWorkMore = root.matches('.work-more');
+  const isCase = root.matches('.case');
+  const views = Number(root.dataset.views) || (isProcess ? chapters.length + 1 : chapters.length);
+  const leadsWithTitle = views > chapters.length;
+  if (!views) return;
+
+  const title = root.querySelector('.process-question, .work-more-title');
+  const board = root.querySelector('.process-board, .work-more-board');
+  const caseHeading = isCase ? root.querySelector('.case-heading') : null;
+  const teamTimeline = root.querySelector('.team-timeline');
+  const teamClose = root.querySelector('.team-close');
   let current = -1;
+
+  /**
+   * Split the Straits heading into per-character spans so view 0 can type
+   * it on, then release the lede. Spaces stay in the flow for natural wrap.
+   */
+  if (caseHeading && !caseHeading.dataset.typedReady) {
+    const raw = caseHeading.textContent.replace(/\s+/g, ' ').trim();
+    caseHeading.replaceChildren(
+      ...[...raw].map((ch, i) => {
+        const span = document.createElement('span');
+        span.className = ch === ' ' ? 'case-char case-char--space' : 'case-char';
+        span.style.setProperty('--i', String(i));
+        span.textContent = ch;
+        return span;
+      }),
+    );
+    caseHeading.dataset.typedReady = '';
+    root.style.setProperty('--case-chars', String(raw.length));
+  }
 
   if (isProcess) {
     root.style.setProperty('--process-views', String(views));
+  } else {
+    root.style.setProperty('--scrolly-views', String(views));
   }
 
   /**
    * Process scenes 0–3 share one timeline; opening and close stay off it.
-   * Team drives its own timeline from data-step in CSS, so this stays process-only.
    */
   const syncProcessTimeline = (chapterIndex) => {
     if (!isProcess) return;
@@ -180,9 +207,35 @@ function setupScrollyRoot(root) {
   };
 
   /**
+   * Size the open timeline row to the chapter copy so later steps sit
+   * on the body instead of in a leftover gap. Then sit the whole spine
+   * in the vertical middle of the stage so the bottom doesn't go empty.
+   */
+  const syncBodySlot = (chapterIndex) => {
+    if (!isProcess) return;
+    if (!desktop.matches || motion.matches || chapterIndex < 0 || chapterIndex > 3) {
+      root.style.removeProperty('--process-body-slot');
+      root.style.removeProperty('--cluster-y');
+      return;
+    }
+    const body = chapters[chapterIndex].querySelector('.process-body');
+    const timeline = root.querySelector('.process-timeline');
+    if (!body || !timeline || !board) return;
+    const gap = 44;
+    const height = Math.ceil(body.getBoundingClientRect().height) + gap;
+    root.style.setProperty('--process-body-slot', `${height}px`);
+
+    const titleReserve = 64;
+    const y = Math.max(
+      titleReserve,
+      Math.round((board.clientHeight - timeline.getBoundingClientRect().height) / 2),
+    );
+    root.style.setProperty('--cluster-y', `${y}px`);
+  };
+
+  /**
    * Measure how far the question must travel from the board's vertical centre
    * to the top. Transform percentages are relative to the title itself.
-   * Team opens with its title already at the top, so it ships no board to measure.
    */
   const measureTitleDrop = () => {
     if (!title || !board) return;
@@ -196,30 +249,55 @@ function setupScrollyRoot(root) {
   const syncTitle = (viewIndex) => {
     if (!title) return;
     if (viewIndex <= 0) root.dataset.title = 'open';
-    else if (viewIndex >= views - 1) root.dataset.title = 'out';
+    else if (isProcess && viewIndex >= views - 1) root.dataset.title = 'out';
     else root.dataset.title = 'pin';
   };
 
   /**
-   * Word-reveal only once the centred title itself is on screen.
-   * Leaving the scene clears the flag so scrolling back can play it again.
+   * Entrance flag for opening titles: process/work-more word-reveal, or the
+   * Straits typewriter. Clears on leave so scrolling back can play again.
    */
   const syncTitleEnter = (viewIndex) => {
-    if (!isProcess || !title) return;
-    const box = title.getBoundingClientRect();
+    if (!leadsWithTitle || (!title && !caseHeading)) return;
+    const box = (title || caseHeading).getBoundingClientRect();
     const onScreen = box.top < window.innerHeight * 0.88 && box.bottom > 64;
     if (viewIndex === 0 && onScreen) root.dataset.titleEnter = '';
     else root.removeAttribute('data-title-enter');
+  };
+
+  /**
+   * Team keeps all three steps readable until the close beat; then the
+   * head + timeline leave and only the close copy stays in the a11y tree.
+   */
+  const syncTeamLayers = (viewIndex) => {
+    if (!teamTimeline || !teamClose) return;
+    const teamHead = root.querySelector('.team-head');
+    const stacked = viewIndex < 0;
+    const closing = viewIndex === views - 1;
+    teamTimeline.toggleAttribute('inert', !stacked && closing);
+    teamClose.toggleAttribute('inert', !stacked && !closing);
+    if (teamHead) teamHead.toggleAttribute('inert', !stacked && closing);
+    if (stacked) {
+      teamTimeline.removeAttribute('aria-hidden');
+      teamClose.removeAttribute('aria-hidden');
+      if (teamHead) teamHead.removeAttribute('aria-hidden');
+      return;
+    }
+    teamTimeline.setAttribute('aria-hidden', String(closing));
+    teamClose.setAttribute('aria-hidden', String(!closing));
+    if (teamHead) teamHead.setAttribute('aria-hidden', String(closing));
   };
 
   const setStacked = () => {
     current = -1;
     root.dataset.step = '0';
     syncProcessTimeline(-1);
+    syncBodySlot(-1);
+    syncTeamLayers(-1);
     root.removeAttribute('data-close-nav');
+    root.removeAttribute('data-title-enter');
     if (title) {
       root.removeAttribute('data-title');
-      root.removeAttribute('data-title-enter');
       root.style.removeProperty('--title-drop');
     }
     chapters.forEach((chapter) => {
@@ -237,11 +315,12 @@ function setupScrollyRoot(root) {
     if (current === viewIndex) return;
     current = viewIndex;
     root.dataset.step = String(viewIndex);
-    const chapterIndex = isProcess ? viewIndex - 1 : viewIndex;
+    const chapterIndex = leadsWithTitle ? viewIndex - 1 : viewIndex;
     syncProcessTimeline(chapterIndex);
     syncTitle(viewIndex);
+    syncTeamLayers(viewIndex);
     chapters.forEach((chapter, i) => {
-      const on = i === chapterIndex;
+      const on = isWorkMore ? viewIndex > 0 : i === chapterIndex;
       chapter.toggleAttribute('data-active', on);
       chapter.toggleAttribute('inert', !on);
       chapter.setAttribute('aria-hidden', String(!on));
@@ -262,7 +341,9 @@ function setupScrollyRoot(root) {
     const travel = Math.max(1, rect.height - window.innerHeight);
     const progress = Math.min(1, Math.max(0, -rect.top / travel));
     const viewIndex = Math.min(views - 1, Math.floor(progress * views));
+    const chapterIndex = leadsWithTitle ? viewIndex - 1 : viewIndex;
     setStep(viewIndex);
+    syncBodySlot(chapterIndex);
     syncTitleEnter(viewIndex);
 
     if (isProcess) {
@@ -323,39 +404,124 @@ function setupReveal() {
 }
 
 /**
- * Native snap strip: prev/next and arrow keys move one still.
+ * Infinite work strip: a slow crawl that wraps forever.
+ * Extra copies of the stills keep the seam off-screen on wide viewports.
+ * Arrows step one still, then the crawl continues.
  */
 function setupWorkCarousel() {
   const root = document.querySelector('[data-carousel]');
   if (!root) return;
 
+  const section = root.closest('.work-more') || root;
   const track = root.querySelector('.work-row');
   const prev = document.querySelector('[data-carousel-prev]');
   const next = document.querySelector('[data-carousel-next]');
   if (!track || !prev || !next) return;
 
+  const originals = [...track.children];
+  let loopWidth = 0;
+  let settling = false;
+  let dragging = false;
+  let inView = false;
+  let lastTs = 0;
+  let settleTimer = 0;
+  const SPEED = 36;
+
+  /**
+   * Append one full copy of the original stills for wrapping.
+   */
+  const appendSet = () => {
+    originals.forEach((item) => {
+      const clone = item.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      clone.querySelectorAll('img').forEach((img) => {
+        img.alt = '';
+      });
+      track.appendChild(clone);
+    });
+  };
+
+  /**
+   * Measure one cycle and clone until the track can wrap inside the viewport.
+   */
+  const measure = () => {
+    if (track.children.length < originals.length * 2) appendSet();
+    const first = originals[0];
+    const marker = track.children[originals.length];
+    if (!first || !marker) return;
+    loopWidth = marker.getBoundingClientRect().left - first.getBoundingClientRect().left;
+    if (loopWidth <= 0) return;
+    let guard = 0;
+    while (track.scrollWidth < track.clientWidth + loopWidth + 1 && guard < 6) {
+      appendSet();
+      guard += 1;
+    }
+  };
+
   const slideStep = () => {
-    const first = track.querySelector(':scope > li');
+    const first = originals[0];
     if (!first) return 0;
     const gap = Number.parseFloat(getComputedStyle(track).gap) || 0;
     return first.getBoundingClientRect().width + gap;
   };
 
-  const sync = () => {
-    const max = Math.max(0, track.scrollWidth - track.clientWidth);
-    prev.disabled = track.scrollLeft <= 2;
-    next.disabled = track.scrollLeft >= max - 2;
+  const wrap = () => {
+    if (loopWidth <= 0) return;
+    while (track.scrollLeft >= loopWidth) track.scrollLeft -= loopWidth;
+    while (track.scrollLeft < 0) track.scrollLeft += loopWidth;
   };
 
   const go = (dir) => {
+    if (loopWidth <= 0) measure();
+    if (dir < 0 && track.scrollLeft <= 2) track.scrollLeft += loopWidth;
+    settling = true;
+    window.clearTimeout(settleTimer);
     const behavior = reducedMotion.matches ? 'auto' : 'smooth';
     track.scrollBy({ left: dir * slideStep(), behavior });
+    settleTimer = window.setTimeout(() => {
+      settling = false;
+      wrap();
+    }, reducedMotion.matches ? 0 : 650);
+  };
+
+  const canCrawl = () =>
+    inView &&
+    (!section.hasAttribute('data-title') || section.dataset.title === 'pin') &&
+    !dragging &&
+    !settling &&
+    !reducedMotion.matches &&
+    document.visibilityState === 'visible';
+
+  const tick = (now) => {
+    if (loopWidth <= 0) measure();
+    const dt = Math.min(0.048, (now - lastTs) / 1000 || 0);
+    lastTs = now;
+    if (canCrawl() && loopWidth > 0) {
+      track.scrollLeft += SPEED * dt;
+      wrap();
+    }
+    requestAnimationFrame(tick);
   };
 
   prev.addEventListener('click', () => go(-1));
   next.addEventListener('click', () => go(1));
-  track.addEventListener('scroll', sync, { passive: true });
-  window.addEventListener('resize', sync);
+  track.addEventListener(
+    'scroll',
+    () => {
+      if (!settling) wrap();
+    },
+    { passive: true },
+  );
+  track.addEventListener('pointerdown', () => {
+    dragging = true;
+  });
+  window.addEventListener('pointerup', () => {
+    dragging = false;
+  });
+  window.addEventListener('pointercancel', () => {
+    dragging = false;
+  });
+  window.addEventListener('resize', measure);
 
   root.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowLeft') {
@@ -367,7 +533,24 @@ function setupWorkCarousel() {
     }
   });
 
-  sync();
+  const io = new IntersectionObserver(
+    (entries) => {
+      inView = entries.some((entry) => entry.isIntersecting);
+    },
+    { threshold: 0.18 },
+  );
+  io.observe(section);
+
+  document.addEventListener('visibilitychange', () => {
+    lastTs = 0;
+  });
+
+  track.querySelectorAll('img').forEach((img) => {
+    if (!img.complete) img.addEventListener('load', measure, { once: true });
+  });
+
+  measure();
+  requestAnimationFrame(tick);
 }
 
 renderLogos();
