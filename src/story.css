@@ -55,7 +55,7 @@
   font-weight: 600;
   letter-spacing: -0.045em;
   line-height: 1.05;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .case-lede > p {
@@ -827,6 +827,10 @@
     max-width: none;
   }
 
+  .js .case-word {
+    white-space: nowrap;
+  }
+
   .js .case-char {
     display: inline;
   }
@@ -835,9 +839,8 @@
     opacity: 0;
   }
 
-  .js .case[data-step="0"][data-title-enter] .case-char {
-    animation: case-type 1ms steps(1) forwards;
-    animation-delay: calc(var(--i, 0) * 28ms);
+  .js .case[data-step="0"] .case-char.is-on {
+    opacity: 1;
   }
 
   .js .case[data-step="0"] .case-lede > p {
@@ -854,7 +857,6 @@
 
   .js .case:not([data-step="0"]) .case-char {
     opacity: 1;
-    animation: none;
   }
 
   /* Metric beats keep the client line only. Collapse the lede so the
@@ -1507,15 +1509,6 @@
 @keyframes work-ghost-drift {
   to {
     transform: rotate(var(--rot, 0deg)) translate3d(var(--dx, 0), var(--dy, 0), 0);
-  }
-}
-
-@keyframes case-type {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }
 

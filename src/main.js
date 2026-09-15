@@ -204,19 +204,34 @@ function setupScrollyRoot(root) {
 
   /**
    * Split the Straits heading into per-character spans so view 0 can type
-   * it on, then release the lede. Spaces stay in the flow for natural wrap.
+   * it on. Words wrap as units so "the feed" cannot split across a line.
    */
+  const caseChars = [];
   if (caseHeading && !caseHeading.dataset.typedReady) {
     const raw = caseHeading.textContent.replace(/\s+/g, ' ').trim();
-    caseHeading.replaceChildren(
-      ...[...raw].map((ch, i) => {
+    const nodes = [];
+    for (const token of raw.split(/(\s+)/)) {
+      if (!token) continue;
+      if (/^\s+$/.test(token)) {
+        const space = document.createElement('span');
+        space.className = 'case-char case-char--space';
+        space.textContent = token;
+        nodes.push(space);
+        caseChars.push(space);
+        continue;
+      }
+      const word = document.createElement('span');
+      word.className = 'case-word';
+      for (const ch of token) {
         const span = document.createElement('span');
-        span.className = ch === ' ' ? 'case-char case-char--space' : 'case-char';
-        span.style.setProperty('--i', String(i));
+        span.className = 'case-char';
         span.textContent = ch;
-        return span;
-      }),
-    );
+        word.append(span);
+        caseChars.push(span);
+      }
+      nodes.push(word);
+    }
+    caseHeading.replaceChildren(...nodes);
     caseHeading.dataset.typedReady = '';
     root.style.setProperty('--case-chars', String(raw.length));
   }
@@ -284,6 +299,34 @@ function setupScrollyRoot(root) {
   };
 
   /**
+   * Type the heading on rAF. Chrome drops staggered CSS animation ticks,
+   * which froze this line at "from t".
+   */
+  const TYPE_STEP = 28;
+  let typeRaf = 0;
+  let typeStart = 0;
+
+  const stopCaseType = () => {
+    if (typeRaf) cancelAnimationFrame(typeRaf);
+    typeRaf = 0;
+    typeStart = 0;
+    caseChars.forEach((el) => el.classList.remove('is-on'));
+  };
+
+  const tickCaseType = (now) => {
+    if (!typeStart) typeStart = now;
+    const elapsed = now - typeStart;
+    caseChars.forEach((el, i) => {
+      if (elapsed >= i * TYPE_STEP) el.classList.add('is-on');
+    });
+    if (elapsed < (caseChars.length - 1) * TYPE_STEP) {
+      typeRaf = requestAnimationFrame(tickCaseType);
+    } else {
+      typeRaf = 0;
+    }
+  };
+
+  /**
    * Entrance flag for opening titles: process/work-more word-reveal, or the
    * Straits typewriter. Clears on leave so scrolling back can play again.
    */
@@ -291,8 +334,18 @@ function setupScrollyRoot(root) {
     if (!leadsWithTitle || (!title && !caseHeading)) return;
     const box = (title || caseHeading).getBoundingClientRect();
     const onScreen = box.top < window.innerHeight * 0.88 && box.bottom > 64;
-    if (viewIndex === 0 && onScreen) root.dataset.titleEnter = '';
-    else root.removeAttribute('data-title-enter');
+    const enter = viewIndex === 0 && onScreen;
+    if (enter) {
+      if (root.hasAttribute('data-title-enter')) return;
+      root.dataset.titleEnter = '';
+      if (caseChars.length && desktop.matches && !motion.matches) {
+        typeStart = 0;
+        typeRaf = requestAnimationFrame(tickCaseType);
+      }
+      return;
+    }
+    root.removeAttribute('data-title-enter');
+    stopCaseType();
   };
 
   /**
@@ -326,6 +379,7 @@ function setupScrollyRoot(root) {
     syncTeamLayers(-1);
     root.removeAttribute('data-close-nav');
     root.removeAttribute('data-title-enter');
+    stopCaseType();
     if (title) {
       root.removeAttribute('data-title');
       root.style.removeProperty('--title-drop');
