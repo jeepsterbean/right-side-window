@@ -149,6 +149,8 @@ function setupNav() {
 
 /**
  * Drive a sticky scrolly stage: one viewport, views swap with scroll progress.
+ * Process adds an opening beat before the chapters so the $1,000 question
+ * can sit as its own chapter, then pin to the top for the four steps.
  */
 function setupScrollyRoot(root) {
   const chapters = [...root.querySelectorAll('[data-chapter]')];
@@ -158,16 +160,55 @@ function setupScrollyRoot(root) {
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const desktop = window.matchMedia('(min-width: 1024px)');
   const isProcess = root.matches('.process');
+  const views = isProcess ? count + 1 : count;
+  const title = isProcess ? root.querySelector('.process-question') : null;
+  const board = isProcess ? root.querySelector('.process-board') : null;
   let current = -1;
 
+  if (isProcess) {
+    root.style.setProperty('--process-views', String(views));
+  }
+
   /**
-   * Process scenes 1–4 share one timeline; map those indices to steps 0–3.
+   * Process scenes 0–3 share one timeline; opening and close stay off it.
    * Team uses this controller too, so the attribute stays process-only.
    */
-  const syncProcessTimeline = (index) => {
+  const syncProcessTimeline = (chapterIndex) => {
     if (!isProcess) return;
-    if (index >= 1 && index <= 4) root.dataset.timeline = String(index - 1);
+    if (chapterIndex >= 0 && chapterIndex <= 3) root.dataset.timeline = String(chapterIndex);
     else delete root.dataset.timeline;
+  };
+
+  /**
+   * Measure how far the question must travel from the board's vertical centre
+   * to the top. Transform percentages are relative to the title itself.
+   */
+  const measureTitleDrop = () => {
+    if (!title || !board) return;
+    const drop = Math.max(0, (board.clientHeight - title.offsetHeight) / 2);
+    root.style.setProperty('--title-drop', `${drop}px`);
+  };
+
+  /**
+   * Title is a discrete chapter: open (centred), pin (top), or out (close).
+   */
+  const syncProcessTitle = (viewIndex) => {
+    if (!isProcess) return;
+    if (viewIndex <= 0) root.dataset.title = 'open';
+    else if (viewIndex >= views - 1) root.dataset.title = 'out';
+    else root.dataset.title = 'pin';
+  };
+
+  /**
+   * Word-reveal only once the centred title itself is on screen.
+   * Leaving the scene clears the flag so scrolling back can play it again.
+   */
+  const syncTitleEnter = (viewIndex) => {
+    if (!isProcess || !title) return;
+    const box = title.getBoundingClientRect();
+    const onScreen = box.top < window.innerHeight * 0.88 && box.bottom > 64;
+    if (viewIndex === 0 && onScreen) root.dataset.titleEnter = '';
+    else root.removeAttribute('data-title-enter');
   };
 
   const setStacked = () => {
@@ -175,6 +216,11 @@ function setupScrollyRoot(root) {
     root.dataset.step = '0';
     syncProcessTimeline(-1);
     root.removeAttribute('data-close-nav');
+    if (isProcess) {
+      root.removeAttribute('data-title');
+      root.removeAttribute('data-title-enter');
+      root.style.removeProperty('--title-drop');
+    }
     chapters.forEach((chapter) => {
       chapter.toggleAttribute('data-active', true);
       chapter.removeAttribute('inert');
@@ -183,15 +229,18 @@ function setupScrollyRoot(root) {
   };
 
   /**
-   * Show one view; inert keeps hidden CTAs out of the tab order.
+   * Show one view. Process view 0 is title-only; chapters start at view 1.
+   * inert keeps hidden CTAs out of the tab order.
    */
-  const setStep = (index) => {
-    if (current === index) return;
-    current = index;
-    root.dataset.step = String(index);
-    syncProcessTimeline(index);
+  const setStep = (viewIndex) => {
+    if (current === viewIndex) return;
+    current = viewIndex;
+    root.dataset.step = String(viewIndex);
+    const chapterIndex = isProcess ? viewIndex - 1 : viewIndex;
+    syncProcessTimeline(chapterIndex);
+    syncProcessTitle(viewIndex);
     chapters.forEach((chapter, i) => {
-      const on = i === index;
+      const on = i === chapterIndex;
       chapter.toggleAttribute('data-active', on);
       chapter.toggleAttribute('inert', !on);
       chapter.setAttribute('aria-hidden', String(!on));
@@ -207,14 +256,17 @@ function setupScrollyRoot(root) {
       return;
     }
 
+    measureTitleDrop();
     const rect = root.getBoundingClientRect();
     const travel = Math.max(1, rect.height - window.innerHeight);
     const progress = Math.min(1, Math.max(0, -rect.top / travel));
-    const index = Math.min(count - 1, Math.floor(progress * count));
-    setStep(index);
+    const viewIndex = Math.min(views - 1, Math.floor(progress * views));
+    setStep(viewIndex);
+    syncTitleEnter(viewIndex);
+
     if (isProcess) {
       const covering = rect.top <= 0 && rect.bottom > 96;
-      root.toggleAttribute('data-close-nav', covering && index === 5);
+      root.toggleAttribute('data-close-nav', covering && viewIndex === views - 1);
     }
   };
 

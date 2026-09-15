@@ -36,12 +36,21 @@
 }
 
 .process-question {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 0.22em;
+  row-gap: 0.06em;
   margin: 0;
-  max-width: 14ch;
-  font-size: clamp(2.25rem, 1.35rem + 4.4vw, 3.35rem);
+  font-size: clamp(1.05rem, 0.45rem + 2.8vw, 1.65rem);
   font-weight: 600;
   letter-spacing: -0.045em;
   line-height: 1.02;
+  text-align: center;
+}
+
+.process-word {
+  display: inline-block;
 }
 
 .process-amount {
@@ -54,10 +63,6 @@
   margin-top: 2.5rem;
   display: grid;
   gap: 3.25rem;
-}
-
-.process-chapter--open + .process-chapter {
-  margin-top: 0.25rem;
 }
 
 .process-id {
@@ -187,8 +192,7 @@
   }
 
   .process-question {
-    max-width: 18ch;
-    font-size: clamp(3rem, 6.2vh, 4.5rem);
+    font-size: clamp(2.35rem, 4.2vw, 3.25rem);
   }
 
   .process-views {
@@ -211,6 +215,9 @@
   }
 
   .js .process {
+    --process-views: 6;
+    --process-title: 620ms;
+    --title-drop: 38vh;
     height: calc(var(--process-views) * 100vh);
     background: transparent;
   }
@@ -342,6 +349,60 @@
     min-height: 0;
   }
 
+  /* Opening scene: centred question. Pin shrinks it to the top centre. */
+  .js .process-question {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 3;
+    width: 100%;
+    margin: 0;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    pointer-events: none;
+    transform-origin: 50% 0;
+    transform: translate3d(0, var(--title-drop), 0);
+    opacity: 1;
+    transition:
+      opacity var(--process-beat) var(--ease-out-expo),
+      transform var(--process-title) var(--ease-out-expo);
+  }
+
+  .js .process-question .process-word {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(0.7em);
+  }
+
+  .js .process[data-title-enter] .process-word {
+    animation: word-in 680ms var(--ease-out-expo) both;
+    animation-delay: calc(var(--i, 0) * 55ms);
+  }
+
+  .js .process[data-title="pin"] .process-word,
+  .js .process[data-title="out"] .process-word {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    animation: none;
+  }
+
+  .js .process[data-title="open"] .process-question {
+    opacity: 1;
+    transform: translate3d(0, var(--title-drop), 0);
+  }
+
+  .js .process[data-title="pin"] .process-question {
+    opacity: 1;
+    transform: scale(0.46);
+  }
+
+  .js .process[data-title="out"] .process-question {
+    opacity: 0;
+    transform: scale(0.46) translate3d(0, -0.6rem, 0);
+  }
+
   .js .process-timeline {
     display: block;
     position: absolute;
@@ -355,19 +416,12 @@
     pointer-events: none;
     border-left: 1px solid oklch(32% 0.04 var(--hue) / 0.2);
     opacity: 0;
-    visibility: hidden;
     transform: translateY(-50%);
-    transition:
-      opacity var(--process-beat) var(--ease-out-expo),
-      visibility 0s var(--process-beat);
+    transition: opacity var(--process-beat) var(--ease-out-expo);
   }
 
   .js .process[data-timeline] .process-timeline {
     opacity: 1;
-    visibility: visible;
-    transition:
-      opacity var(--process-beat) var(--ease-out-expo),
-      visibility 0s;
   }
 
   .js .process-timeline li {
@@ -449,14 +503,6 @@
       visibility 0s var(--process-beat);
   }
 
-  .js .process-chapter--open {
-    transform: translateY(-1.15rem);
-    transition:
-      opacity var(--process-beat) var(--ease-out-expo),
-      transform var(--process-beat) var(--ease-out-expo),
-      visibility 0s var(--process-beat);
-  }
-
   .js .process-chapter--close {
     transform: translateY(1rem);
     background: transparent;
@@ -478,7 +524,6 @@
       visibility 0s;
   }
 
-  .js .process-chapter--open[data-active],
   .js .process-chapter--close[data-active] {
     transform: none;
     transition:
@@ -487,12 +532,7 @@
       visibility 0s;
   }
 
-  .js .process-chapter--open {
-    display: flex;
-    align-items: center;
-  }
-
-  .js .process-chapter:not(.process-chapter--open):not(.process-chapter--close) .process-id {
+  .js .process-chapter:not(.process-chapter--close) .process-id {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -504,7 +544,7 @@
     border: 0;
   }
 
-  .js .process-chapter:not(.process-chapter--open):not(.process-chapter--close) .process-body {
+  .js .process-chapter:not(.process-chapter--close) .process-body {
     position: absolute;
     left: 40%;
     top: 50%;
@@ -596,7 +636,6 @@
   }
 
   .js .process-chapter,
-  .js .process-chapter--open,
   .js .process-chapter--close {
     position: static;
     opacity: 1;
@@ -606,11 +645,22 @@
     transition: none;
   }
 
-  .js .process-chapter--open {
-    display: block;
+  .js .process-question {
+    position: static;
+    width: auto;
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 
-  .js .process-chapter:not(.process-chapter--open):not(.process-chapter--close) .process-id {
+  .js .process-question .process-word {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    animation: none;
+  }
+
+  .js .process-chapter:not(.process-chapter--close) .process-id {
     position: static;
     width: auto;
     height: auto;
@@ -620,7 +670,7 @@
     white-space: normal;
   }
 
-  .js .process-chapter:not(.process-chapter--open):not(.process-chapter--close) .process-body {
+  .js .process-chapter:not(.process-chapter--close) .process-body {
     position: static;
     left: auto;
     top: auto;
