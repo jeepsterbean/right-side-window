@@ -284,10 +284,6 @@
   padding: 5rem 0 4.5rem;
 }
 
-.retainer-head .retainer-kicker {
-  margin-bottom: 0.55rem;
-}
-
 .retainer h2 {
   margin: 0;
   font-size: clamp(2.375rem, 1.4rem + 5vw, 4.5rem);
@@ -301,15 +297,6 @@
 }
 
 .retainer-title-alt {
-  color: var(--text-secondary);
-}
-
-.retainer-lede {
-  margin: 0.95rem 0 0;
-  max-width: 28rem;
-  font-size: var(--text-body-xl);
-  font-weight: 500;
-  line-height: 1.5;
   color: var(--text-secondary);
 }
 
@@ -361,17 +348,8 @@
   padding: 0;
 }
 
-.retainer-kicker {
-  margin: 0;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
 .retainer-price {
-  margin: 0.35rem 0 1.15rem;
+  margin: 0 0 1.15rem;
   font-size: clamp(1.5rem, 3vw, 1.9rem);
   font-weight: 500;
   letter-spacing: -0.04em;

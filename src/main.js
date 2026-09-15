@@ -161,8 +161,8 @@ function setupScrollyRoot(root) {
   const desktop = window.matchMedia('(min-width: 1024px)');
   const isProcess = root.matches('.process');
   const views = isProcess ? count + 1 : count;
-  const title = isProcess ? root.querySelector('.process-question') : null;
-  const board = isProcess ? root.querySelector('.process-board') : null;
+  const title = root.querySelector('.process-question, .team-title');
+  const board = root.querySelector('.process-board');
   let current = -1;
 
   if (isProcess) {
@@ -171,7 +171,7 @@ function setupScrollyRoot(root) {
 
   /**
    * Process scenes 0–3 share one timeline; opening and close stay off it.
-   * Team uses this controller too, so the attribute stays process-only.
+   * Team drives its own timeline from data-step in CSS, so this stays process-only.
    */
   const syncProcessTimeline = (chapterIndex) => {
     if (!isProcess) return;
@@ -182,6 +182,7 @@ function setupScrollyRoot(root) {
   /**
    * Measure how far the question must travel from the board's vertical centre
    * to the top. Transform percentages are relative to the title itself.
+   * Team opens with its title already at the top, so it ships no board to measure.
    */
   const measureTitleDrop = () => {
     if (!title || !board) return;
@@ -192,8 +193,8 @@ function setupScrollyRoot(root) {
   /**
    * Title is a discrete chapter: open (centred), pin (top), or out (close).
    */
-  const syncProcessTitle = (viewIndex) => {
-    if (!isProcess) return;
+  const syncTitle = (viewIndex) => {
+    if (!title) return;
     if (viewIndex <= 0) root.dataset.title = 'open';
     else if (viewIndex >= views - 1) root.dataset.title = 'out';
     else root.dataset.title = 'pin';
@@ -216,7 +217,7 @@ function setupScrollyRoot(root) {
     root.dataset.step = '0';
     syncProcessTimeline(-1);
     root.removeAttribute('data-close-nav');
-    if (isProcess) {
+    if (title) {
       root.removeAttribute('data-title');
       root.removeAttribute('data-title-enter');
       root.style.removeProperty('--title-drop');
@@ -238,7 +239,7 @@ function setupScrollyRoot(root) {
     root.dataset.step = String(viewIndex);
     const chapterIndex = isProcess ? viewIndex - 1 : viewIndex;
     syncProcessTimeline(chapterIndex);
-    syncProcessTitle(viewIndex);
+    syncTitle(viewIndex);
     chapters.forEach((chapter, i) => {
       const on = i === chapterIndex;
       chapter.toggleAttribute('data-active', on);
