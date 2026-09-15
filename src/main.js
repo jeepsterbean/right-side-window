@@ -250,6 +250,53 @@ function setupReveal() {
   });
 }
 
+/**
+ * Native snap strip: prev/next and arrow keys move one still.
+ */
+function setupWorkCarousel() {
+  const root = document.querySelector('[data-carousel]');
+  if (!root) return;
+
+  const track = root.querySelector('.work-row');
+  const prev = document.querySelector('[data-carousel-prev]');
+  const next = document.querySelector('[data-carousel-next]');
+  if (!track || !prev || !next) return;
+
+  const slideStep = () => {
+    const first = track.querySelector(':scope > li');
+    if (!first) return 0;
+    const gap = Number.parseFloat(getComputedStyle(track).gap) || 0;
+    return first.getBoundingClientRect().width + gap;
+  };
+
+  const sync = () => {
+    const max = Math.max(0, track.scrollWidth - track.clientWidth);
+    prev.disabled = track.scrollLeft <= 2;
+    next.disabled = track.scrollLeft >= max - 2;
+  };
+
+  const go = (dir) => {
+    const behavior = reducedMotion.matches ? 'auto' : 'smooth';
+    track.scrollBy({ left: dir * slideStep(), behavior });
+  };
+
+  prev.addEventListener('click', () => go(-1));
+  next.addEventListener('click', () => go(1));
+  track.addEventListener('scroll', sync, { passive: true });
+  window.addEventListener('resize', sync);
+
+  root.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      go(-1);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      go(1);
+    }
+  });
+
+  sync();
+}
 
 renderLogos();
 reducedMotion.addEventListener('change', renderLogos);
@@ -257,3 +304,4 @@ setupLogoHover();
 setupNav();
 setupScrolly();
 setupReveal();
+setupWorkCarousel();
